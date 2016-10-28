@@ -7,7 +7,7 @@ Based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/pos
 
 Docker:
 ```sh
-$ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
+$ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local
 ```
 
 Docker Compose:
@@ -42,9 +42,18 @@ services:
             - BACKUP_KEEP_MONTHS=6
 ```
 
+### Manual Backups
+
+By default it makes daily backups but you can start a manual one by running the command `/backup.sh`.
+
+Example running only manual backup on Docker:
+```sh
+$ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
+```
+
 ### Automatic Periodic Backups
 
-You can additionally set the `SCHEDULE` environment variable like `-e SCHEDULE="@daily"` to run the backup automatically.
+You can change the `SCHEDULE` environment variable like `-e SCHEDULE="@daily"` to change its default frequency, by default is daily.
 
 More information about the scheduling can be found [here](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
 
