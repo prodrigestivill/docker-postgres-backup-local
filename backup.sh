@@ -3,8 +3,8 @@
 set -e
 set -o pipefail
 
-if [ "${POSTGRES_DATABASE}" = "**None**" ]; then
-  echo "You need to set the POSTGRES_DATABASE environment variable."
+if [ "${POSTGRES_DB}" = "**None**" ]; then
+  echo "You need to set the POSTGRES_DB environment variable."
   exit 1
 fi
 
@@ -36,22 +36,22 @@ KEEP_WEEKS=`expr $((($BACKUP_KEEP_WEEKS * 7) + 1))`
 KEEP_MONTHS=`expr $((($BACKUP_KEEP_MONTHS * 31) + 1))`
 
 #Initialize filename vers and dirs
-DFILE="$BACKUP_DIR/daily/$POSTGRES_DATABASE-`date +%Y%m%d-%H%M%S`.sql.gz"
-WFILE="$BACKUP_DIR/weekly/$POSTGRES_DATABASE-`date +%G%V`.sql.gz"
-MFILE="$BACKUP_DIR/monthly/$POSTGRES_DATABASE-`date +%Y%m`.sql.gz"
+DFILE="$BACKUP_DIR/daily/$POSTGRES_DB-`date +%Y%m%d-%H%M%S`.sql.gz"
+WFILE="$BACKUP_DIR/weekly/$POSTGRES_DB-`date +%G%V`.sql.gz"
+MFILE="$BACKUP_DIR/monthly/$POSTGRES_DB-`date +%Y%m`.sql.gz"
 mkdir -p "$BACKUP_DIR/daily/" "$BACKUP_DIR/weekly/" "$BACKUP_DIR/monthly/"
 
 #Create dump
-echo "Creating dump of ${POSTGRES_DATABASE} database from ${POSTGRES_HOST}..."
-pg_dump -f "$DFILE" $POSTGRES_HOST_OPTS $POSTGRES_DATABASE
+echo "Creating dump of ${POSTGRES_DB} database from ${POSTGRES_HOST}..."
+pg_dump -f "$DFILE" $POSTGRES_HOST_OPTS $POSTGRES_DB
 
 #Copy (hardlink) for each entry
 ln -vf "$DFILE" "$WFILE"
 ln -vf "$DFILE" "$MFILE"
 
 #Clean old files
-find "$BACKUP_DIR/daily" -maxdepth 1 -mtime +$KEEP_DAYS -name "$POSTGRES_DATABASE-*.sql*" -exec rm -rf '{}' ';'
-find "$BACKUP_DIR/weekly" -maxdepth 1 -mtime +$KEEP_WEEKS -name "$POSTGRES_DATABASE-*.sql*" -exec rm -rf '{}' ';'
-find "$BACKUP_DIR/monthly" -maxdepth 1 -mtime +$KEEP_MONTHS -name "$POSTGRES_DATABASE-*.sql*" -exec rm -rf '{}' ';'
+find "$BACKUP_DIR/daily" -maxdepth 1 -mtime +$KEEP_DAYS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
+find "$BACKUP_DIR/weekly" -maxdepth 1 -mtime +$KEEP_WEEKS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
+find "$BACKUP_DIR/monthly" -maxdepth 1 -mtime +$KEEP_MONTHS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
 
 echo "SQL backup uploaded successfully"

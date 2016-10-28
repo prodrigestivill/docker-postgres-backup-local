@@ -15,6 +15,7 @@ Docker Compose:
 postgres:
   image: postgres
   environment:
+    POSTGRES_DB: dbname
     POSTGRES_USER: user
     POSTGRES_PASSWORD: password
 
@@ -30,7 +31,7 @@ pgbackups:
     BACKUP_KEEP_DAYS: 7
     BACKUP_KEEP_WEEKS: 4
     BACKUP_KEEP_MONTHS: 6
-    POSTGRES_DATABASE: dbname
+    POSTGRES_DB: dbname
     POSTGRES_USER: user
     POSTGRES_PASSWORD: password
     POSTGRES_EXTRA_OPTS: '-Z9 --schema=public --blobs'
