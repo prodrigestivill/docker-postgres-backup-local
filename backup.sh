@@ -1,7 +1,6 @@
 #! /bin/sh
 
 set -e
-set -o pipefail
 
 if [ "${POSTGRES_DB}" = "**None**" ]; then
   echo "You need to set the POSTGRES_DB environment variable."

@@ -7,34 +7,39 @@ Based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/pos
 
 Docker:
 ```sh
-$ docker run -e BACKUP_DIR=/backups -e POSTGRES_DATABASE=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password -e POSTGRES_HOST=localhost schickling/postgres-backup-local
+$ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
 ```
 
 Docker Compose:
 ```yaml
-postgres:
-  image: postgres
-  environment:
-    POSTGRES_DB: dbname
-    POSTGRES_USER: user
-    POSTGRES_PASSWORD: password
-
-pgbackups:
-  image: prodrigestivill/postgres-backup-local
-  links:
-    - postgres
-  volumes:
-    - /var/opt/pgbackups:/backups
-  environment:
-    SCHEDULE: '@daily'
-    BACKUP_DIR: /backups
-    BACKUP_KEEP_DAYS: 7
-    BACKUP_KEEP_WEEKS: 4
-    BACKUP_KEEP_MONTHS: 6
-    POSTGRES_DB: dbname
-    POSTGRES_USER: user
-    POSTGRES_PASSWORD: password
-    POSTGRES_EXTRA_OPTS: '-Z9 --schema=public --blobs'
+version: '2'
+services:
+    postgres:
+        image: postgres
+        restart: always
+        environment:
+            - POSTGRES_DB=database
+            - POSTGRES_USER=username
+            - POSTGRES_PASSWORD=password
+    pgbackups:
+        image: prodrigestivill/postgres-backup-local
+        restart: always
+        volumes:
+            - /var/opt/pgbackups:/backups
+        links:
+            - postgres
+        depends_on:
+            - postgres
+        environment:
+            - POSTGRES_HOST=postgres
+            - POSTGRES_DB=database
+            - POSTGRES_USER=username
+            - POSTGRES_PASSWORD=password
+            - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+            - SCHEDULE=@daily
+            - BACKUP_KEEP_DAYS=7
+            - BACKUP_KEEP_WEEKS=4
+            - BACKUP_KEEP_MONTHS=6
 ```
 
 ### Automatic Periodic Backups
