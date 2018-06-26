@@ -17,13 +17,14 @@ ENV BACKUP_DIR '/backups'
 ENV BACKUP_KEEP_DAYS 7
 ENV BACKUP_KEEP_WEEKS 4
 ENV BACKUP_KEEP_MONTHS 6
+ENV HEALTHCHECK_PORT 80
 
 COPY backup.sh /backup.sh
 
 VOLUME /backups
 
 ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["exec /usr/local/bin/go-cron -s \"$SCHEDULE\" -p 80 -- /backup.sh"]
+CMD ["exec /usr/local/bin/go-cron -s \"$SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh"]
 
 HEALTHCHECK --interval=5m --timeout=3s \
-  CMD curl -f http://localhost/ || exit 1
+  CMD curl -f "http://localhost:$HEALTHCHECK_PORT/" || exit 1
