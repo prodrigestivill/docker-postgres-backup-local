@@ -2,6 +2,7 @@
 
 Backup PostgresSQL to local filesystem with periodic backups and rotate backups.
 Based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/postgres-backup-s3/).
+It can backup multiple databases from the same host by setting all databases in `POSTGRES_DB` separated by comas or spaces.
 
 ## Usage
 

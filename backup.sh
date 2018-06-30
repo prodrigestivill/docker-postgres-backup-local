@@ -34,19 +34,24 @@ KEEP_DAYS=$BACKUP_KEEP_DAYS
 KEEP_WEEKS=`expr $((($BACKUP_KEEP_WEEKS * 7) + 1))`
 KEEP_MONTHS=`expr $((($BACKUP_KEEP_MONTHS * 31) + 1))`
 
-#Initialize filename vers and dirs
-DFILE="$BACKUP_DIR/daily/$POSTGRES_DB-`date +%Y%m%d-%H%M%S`.sql.gz"
-WFILE="$BACKUP_DIR/weekly/$POSTGRES_DB-`date +%G%V`.sql.gz"
-MFILE="$BACKUP_DIR/monthly/$POSTGRES_DB-`date +%Y%m`.sql.gz"
+#Initialize dirs
 mkdir -p "$BACKUP_DIR/daily/" "$BACKUP_DIR/weekly/" "$BACKUP_DIR/monthly/"
 
-#Create dump
-echo "Creating dump of ${POSTGRES_DB} database from ${POSTGRES_HOST}..."
-pg_dump -f "$DFILE" $POSTGRES_HOST_OPTS $POSTGRES_DB
+#Loop all databases
+for DB in $(echo $POSTGRES_DB | tr , " "); do
+    #Initialize filename vers
+    DFILE="$BACKUP_DIR/daily/$DB-`date +%Y%m%d-%H%M%S`.sql.gz"
+    WFILE="$BACKUP_DIR/weekly/$DB-`date +%G%V`.sql.gz"
+    MFILE="$BACKUP_DIR/monthly/$DB-`date +%Y%m`.sql.gz"
 
-#Copy (hardlink) for each entry
-ln -vf "$DFILE" "$WFILE"
-ln -vf "$DFILE" "$MFILE"
+    #Create dump
+    echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
+    pg_dump -f "$DFILE" $POSTGRES_HOST_OPTS $DB
+
+    #Copy (hardlink) for each entry
+    ln -vf "$DFILE" "$WFILE"
+    ln -vf "$DFILE" "$MFILE"
+done
 
 #Clean old files
 find "$BACKUP_DIR/daily" -maxdepth 1 -mtime +$KEEP_DAYS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
