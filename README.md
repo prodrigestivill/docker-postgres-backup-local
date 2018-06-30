@@ -21,6 +21,7 @@ services:
             - POSTGRES_DB=database
             - POSTGRES_USER=username
             - POSTGRES_PASSWORD=password
+         #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
     pgbackups:
         image: prodrigestivill/postgres-backup-local
         restart: always
