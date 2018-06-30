@@ -35,11 +35,14 @@ services:
             - POSTGRES_DB=database
             - POSTGRES_USER=username
             - POSTGRES_PASSWORD=password
+         #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
             - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
             - SCHEDULE=@daily
             - BACKUP_KEEP_DAYS=7
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
+            - HEALTHCHECK_PORT=80
+            
 ```
 
 ### Manual Backups
