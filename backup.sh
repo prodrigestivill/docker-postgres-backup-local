@@ -22,7 +22,7 @@ if [ "${POSTGRES_USER}" = "**None**" ]; then
   exit 1
 fi
 
-if [ "${POSTGRES_PASSWORD}" = "**None**" ]; then
+if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
   echo "You need to set the POSTGRES_PASSWORD environment variable or link to a container named POSTGRES."
   exit 1
 fi
@@ -30,8 +30,11 @@ fi
 #Proces vars
 if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
   export PGPASSWORD=$POSTGRES_PASSWORD
-else
+else if [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
   export PGPASSWORD=$(cat ${POSTGRES_PASSWORD_FILE})
+else
+  echo "Missing POSTGRES_PASSWORD_FILE file."
+  exit 1
 fi
 POSTGRES_HOST_OPTS="-h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER $POSTGRES_EXTRA_OPTS"
 KEEP_DAYS=$BACKUP_KEEP_DAYS
