@@ -46,18 +46,16 @@ mkdir -p "$BACKUP_DIR/daily/" "$BACKUP_DIR/weekly/" "$BACKUP_DIR/monthly/"
 
 #Loop all databases
 for DB in $(echo $POSTGRES_DB | tr , " "); do
-    #Initialize filename vers
-    DFILE="$BACKUP_DIR/daily/$DB-`date +%Y%m%d-%H%M%S`.sql.gz"
-    WFILE="$BACKUP_DIR/weekly/$DB-`date +%G%V`.sql.gz"
-    MFILE="$BACKUP_DIR/monthly/$DB-`date +%Y%m`.sql.gz"
-
-    #Create dump
-    echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dump -f "$DFILE" $POSTGRES_HOST_OPTS $DB
-
-    #Copy (hardlink) for each entry
-    ln -vf "$DFILE" "$WFILE"
-    ln -vf "$DFILE" "$MFILE"
+  #Initialize filename vers
+  DFILE="$BACKUP_DIR/daily/$DB-`date +%Y%m%d-%H%M%S`.sql.gz"
+  WFILE="$BACKUP_DIR/weekly/$DB-`date +%G%V`.sql.gz"
+  MFILE="$BACKUP_DIR/monthly/$DB-`date +%Y%m`.sql.gz"
+  #Create dump
+  echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
+  pg_dump -f "$DFILE" $POSTGRES_HOST_OPTS $DB
+  #Copy (hardlink) for each entry
+  ln -vf "$DFILE" "$WFILE"
+  ln -vf "$DFILE" "$MFILE"
 done
 
 #Clean old files
