@@ -30,7 +30,7 @@ fi
 #Proces vars
 if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
   export PGPASSWORD=$POSTGRES_PASSWORD
-else if [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
+elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
   export PGPASSWORD=$(cat ${POSTGRES_PASSWORD_FILE})
 else
   echo "Missing POSTGRES_PASSWORD_FILE file."
