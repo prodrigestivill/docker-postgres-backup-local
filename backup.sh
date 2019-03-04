@@ -56,11 +56,11 @@ for DB in $(echo $POSTGRES_DB | tr , " "); do
   #Copy (hardlink) for each entry
   ln -vf "$DFILE" "$WFILE"
   ln -vf "$DFILE" "$MFILE"
-done
 
-#Clean old files
-find "$BACKUP_DIR/daily" -maxdepth 1 -mtime +$KEEP_DAYS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
-find "$BACKUP_DIR/weekly" -maxdepth 1 -mtime +$KEEP_WEEKS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
-find "$BACKUP_DIR/monthly" -maxdepth 1 -mtime +$KEEP_MONTHS -name "$POSTGRES_DB-*.sql*" -exec rm -rf '{}' ';'
+  #Clean old files
+  find "$BACKUP_DIR/daily" -maxdepth 1 -mtime +$KEEP_DAYS -name "$DB-*.sql*" -exec rm -rf '{}' ';'
+  find "$BACKUP_DIR/weekly" -maxdepth 1 -mtime +$KEEP_WEEKS -name "$DB-*.sql*" -exec rm -rf '{}' ';'
+  find "$BACKUP_DIR/monthly" -maxdepth 1 -mtime +$KEEP_MONTHS -name "$DB-*.sql*" -exec rm -rf '{}' ';'
+done
 
 echo "SQL backup uploaded successfully"
