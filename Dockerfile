@@ -1,10 +1,10 @@
-FROM postgres
+FROM postgres:alpine
 
 RUN set -x \
-	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* \
+	&& apk update && apk add ca-certificates curl \
 	&& curl -L https://github.com/odise/go-cron/releases/download/v0.0.7/go-cron-linux.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron \
-	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
+	&& apk del ca-certificates curl
 
 ENV POSTGRES_DB **None**
 ENV POSTGRES_HOST **None**
