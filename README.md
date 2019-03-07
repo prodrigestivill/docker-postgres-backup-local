@@ -47,6 +47,23 @@ services:
             
 ```
 
+### Environment Variables
+Most variables are the same as [postgres official image](https://hub.docker.com/_/postgres/).
+
+| env variable | description |
+|--|--|
+| POSTGRES_HOST | postgres connection parameter; postgres host. |
+| POSTGRES_DB | postgres connection parameter; postgres database to connect to. |
+| POSTGRES_USER | postgres connection parameter; postgres user to connect with. |
+| POSTGRES_PASSWORD | postgres connection parameter; postgres password to connect with. |
+| POSTGRES_PASSWORD_FILE | alternative to POSTGRES_PASSWORD, to use with docker secrets. |
+| POSTGRES_EXTRA_OPTS | additional options to supply `pg_dump` when creating back-ups. |
+| SCHEDULE | [cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between taking postgres backups. |
+| BACKUP_KEEP_DAYS | number of days to keep backups before removing. |
+| BACKUP_KEEP_WEEKS | number of weeks to keep backups before removing. |
+| BACKUP_KEEP_MONTHS | number of months to keep backups before removing. |
+| HEALTHCHECK_PORT | Port listening for cron-schedule health check. |
+
 ### Manual Backups
 
 By default it makes daily backups but you can start a manual one by running the command `/backup.sh`.
