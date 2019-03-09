@@ -44,7 +44,7 @@ services:
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
             - HEALTHCHECK_PORT=80
-            
+
 ```
 
 ### Environment Variables
@@ -53,7 +53,7 @@ Most variables are the same as [postgres official image](https://hub.docker.com/
 | env variable | description |
 |--|--|
 | POSTGRES_HOST | postgres connection parameter; postgres host. |
-| POSTGRES_DB | postgres connection parameter; postgres database to connect to. |
+| POSTGRES_DB | coma list of postgres databases to connect to. |
 | POSTGRES_USER | postgres connection parameter; postgres user to connect with. |
 | POSTGRES_PASSWORD | postgres connection parameter; postgres password to connect with. |
 | POSTGRES_PASSWORD_FILE | alternative to POSTGRES_PASSWORD, to use with docker secrets. |
