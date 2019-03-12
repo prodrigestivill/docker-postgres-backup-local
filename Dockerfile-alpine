@@ -4,7 +4,7 @@ RUN set -x \
 	&& apk update && apk add ca-certificates curl \
 	&& curl -L https://github.com/odise/go-cron/releases/download/v0.0.7/go-cron-linux.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron \
-	&& apk del ca-certificates curl
+	&& apk del ca-certificates
 
 ENV POSTGRES_DB **None**
 ENV POSTGRES_HOST **None**
