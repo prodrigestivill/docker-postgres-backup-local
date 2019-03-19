@@ -1,8 +1,7 @@
 # postgres-backup-local
 
-Backup PostgresSQL to local filesystem with periodic backups and rotate backups.
-Based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/postgres-backup-s3/).
-It can backup multiple databases from the same host by setting all databases in `POSTGRES_DB` separated by comas or spaces.
+Backup PostgresSQL to the local filesystem with periodic rotating backups, based on [schickling/postgres-backup-s3](https://hub.docker.com/r/schickling/postgres-backup-s3/).
+Backup multiple databases from the same host by setting the database names in `POSTGRES_DB` separated by commas or spaces.
 
 ## Usage
 
@@ -48,35 +47,34 @@ services:
 ```
 
 ### Environment Variables
-Most variables are the same as [postgres official image](https://hub.docker.com/_/postgres/).
+Most variables are the same as in the [official postgres image](https://hub.docker.com/_/postgres/).
 
 | env variable | description |
 |--|--|
-| POSTGRES_HOST | postgres connection parameter; postgres host. |
-| POSTGRES_DB | coma list of postgres databases to connect to. |
+| POSTGRES_HOST | postgres connection parameter; postgres host to connect to. |
+| POSTGRES_DB | comma or space separated list of postgres databases to backup. |
 | POSTGRES_USER | postgres connection parameter; postgres user to connect with. |
 | POSTGRES_PASSWORD | postgres connection parameter; postgres password to connect with. |
-| POSTGRES_PASSWORD_FILE | alternative to POSTGRES_PASSWORD, to use with docker secrets. |
-| POSTGRES_EXTRA_OPTS | additional options to supply `pg_dump` when creating back-ups. |
-| SCHEDULE | [cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between taking postgres backups. |
-| BACKUP_KEEP_DAYS | number of days to keep backups before removal. |
-| BACKUP_KEEP_WEEKS | number of weeks to keep backups before removal. |
-| BACKUP_KEEP_MONTHS | number of months to keep backups before removal. |
+| POSTGRES_PASSWORD_FILE | alternative to POSTGRES_PASSWORD, useful with docker secrets. |
+| POSTGRES_EXTRA_OPTS | additional options for `pg_dump`. |
+| SCHEDULE | [cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. |
+| BACKUP_KEEP_DAYS | number of daily backups to keep before removal. |
+| BACKUP_KEEP_WEEKS | number of weekkly backups to keep before removal. |
+| BACKUP_KEEP_MONTHS | number of monthly backups to keep before removal. |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. |
 
 ### Manual Backups
 
-By default it makes daily backups but you can start a manual one by running the command `/backup.sh`.
+By default this container makes daily backups, but you can start a manual backup by running `/backup.sh`:
 
-Example running only manual backup on Docker:
 ```sh
 $ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
 ```
 
 ### Automatic Periodic Backups
 
-You can change the `SCHEDULE` environment variable like `-e SCHEDULE="@daily"` to change its default frequency, by default is daily.
+You can change the `SCHEDULE` environment variable in `-e SCHEDULE="@daily"` to alter the default frequency. Default is `daily`.
 
 More information about the scheduling can be found [here](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
 
-Folders daily, weekly and monthly are created and populated using hard links to save disk space.
+Folders `daily`, `weekly` and `monthly` are created and populated using hard links to save disk space.
