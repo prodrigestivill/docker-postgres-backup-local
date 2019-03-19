@@ -59,9 +59,9 @@ Most variables are the same as [postgres official image](https://hub.docker.com/
 | POSTGRES_PASSWORD_FILE | alternative to POSTGRES_PASSWORD, to use with docker secrets. |
 | POSTGRES_EXTRA_OPTS | additional options to supply `pg_dump` when creating back-ups. |
 | SCHEDULE | [cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between taking postgres backups. |
-| BACKUP_KEEP_DAYS | number of days to keep backups before removing. |
-| BACKUP_KEEP_WEEKS | number of weeks to keep backups before removing. |
-| BACKUP_KEEP_MONTHS | number of months to keep backups before removing. |
+| BACKUP_KEEP_DAYS | number of days to keep backups before removal. |
+| BACKUP_KEEP_WEEKS | number of weeks to keep backups before removal. |
+| BACKUP_KEEP_MONTHS | number of months to keep backups before removal. |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. |
 
 ### Manual Backups
