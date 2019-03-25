@@ -28,12 +28,18 @@ if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**Non
 fi
 
 #Process vars
-if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
-  export POSTGRES_DB=$POSTGRES_DB
-elif [ -r "${POSTGRES_DB_FILE}" ]; then
-  export POSTGRES_DB=$(cat ${POSTGRES_DB_FILE})
+if [ "${POSTGRES_DB}" = "**None**" -a -r "${POSTGRES_DB_FILE}" ]; then
+  POSTGRES_DB=$(cat ${POSTGRES_DB_FILE})
 else
   echo "Missing POSTGRES_DB_FILE file."
+  exit 1
+fi
+if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
+  export PGUSER=$POSTGRES_USER
+elif [ -r "${POSTGRES_USER_FILE}" ]; then
+  export PGUSER=$(cat ${POSTGRES_USER_FILE})
+else
+  echo "Missing POSTGRES_USER_FILE file."
   exit 1
 fi
 if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
@@ -44,15 +50,7 @@ else
   echo "Missing POSTGRES_PASSWORD_FILE file."
   exit 1
 fi
-if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
-  export POSTGRES_USER=$POSTGRES_USER
-elif [ -r "${POSTGRES_USER_FILE}" ]; then
-  export POSTGRES_USER=$(cat ${POSTGRES_USER_FILE})
-else
-  echo "Missing POSTGRES_USER_FILE file."
-  exit 1
-fi
-POSTGRES_HOST_OPTS="-h $POSTGRES_HOST -p $POSTGRES_PORT -U $POSTGRES_USER $POSTGRES_EXTRA_OPTS"
+POSTGRES_HOST_OPTS="-h $POSTGRES_HOST -p $POSTGRES_PORT $POSTGRES_EXTRA_OPTS"
 KEEP_DAYS=$BACKUP_KEEP_DAYS
 KEEP_WEEKS=`expr $((($BACKUP_KEEP_WEEKS * 7) + 1))`
 KEEP_MONTHS=`expr $((($BACKUP_KEEP_MONTHS * 31) + 1))`
