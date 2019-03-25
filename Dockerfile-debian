@@ -7,9 +7,11 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
 
 ENV POSTGRES_DB **None**
+ENV POSTGRES_DB_FILE **None**
 ENV POSTGRES_HOST **None**
 ENV POSTGRES_PORT 5432
 ENV POSTGRES_USER **None**
+ENV POSTGRES_USER_FILE **None**
 ENV POSTGRES_PASSWORD **None**
 ENV POSTGRES_PASSWORD_FILE **None**
 ENV POSTGRES_EXTRA_OPTS '-Z9'
