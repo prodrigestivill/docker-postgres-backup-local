@@ -28,24 +28,26 @@ if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**Non
 fi
 
 #Process vars
-if [ "${POSTGRES_DB}" = "**None**" -a -r "${POSTGRES_DB_FILE}" ]; then
-  POSTGRES_DB=$(cat ${POSTGRES_DB_FILE})
+if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
+  POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
+elif [ -r "${POSTGRES_DB_FILE}" ]; then
+  POSTGRES_DBS=$(cat "${POSTGRES_DB_FILE}")
 else
   echo "Missing POSTGRES_DB_FILE file."
   exit 1
 fi
 if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
-  export PGUSER=$POSTGRES_USER
+  export PGUSER="$POSTGRES_USER"
 elif [ -r "${POSTGRES_USER_FILE}" ]; then
-  export PGUSER=$(cat ${POSTGRES_USER_FILE})
+  export PGUSER=$(cat "${POSTGRES_USER_FILE}")
 else
   echo "Missing POSTGRES_USER_FILE file."
   exit 1
 fi
 if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
-  export PGPASSWORD=$POSTGRES_PASSWORD
+  export PGPASSWORD="$POSTGRES_PASSWORD"
 elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
-  export PGPASSWORD=$(cat ${POSTGRES_PASSWORD_FILE})
+  export PGPASSWORD=$(cat "${POSTGRES_PASSWORD_FILE}")
 else
   echo "Missing POSTGRES_PASSWORD_FILE file."
   exit 1
@@ -59,7 +61,7 @@ KEEP_MONTHS=`expr $((($BACKUP_KEEP_MONTHS * 31) + 1))`
 mkdir -p "$BACKUP_DIR/daily/" "$BACKUP_DIR/weekly/" "$BACKUP_DIR/monthly/"
 
 #Loop all databases
-for DB in $(echo $POSTGRES_DB | tr , " "); do
+for DB in $POSTGRES_DBS; do
   #Initialize filename vers
   DFILE="$BACKUP_DIR/daily/$DB-`date +%Y%m%d-%H%M%S`.sql.gz"
   WFILE="$BACKUP_DIR/weekly/$DB-`date +%G%V`.sql.gz"

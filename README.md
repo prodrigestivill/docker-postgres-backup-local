@@ -57,7 +57,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
-| POSTGRES_DB_FILE | Alternative to POSTGRES_DB, for usage with docker secrets. |
+| POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |
 | POSTGRES_EXTRA_OPTS | Additional options for `pg_dump`. Defaults to `-Z9`. |
 | POSTGRES_HOST | Postgres connection parameter; postgres host to connect to. Required. |
 | POSTGRES_PASSWORD | Postgres connection parameter; postgres password to connect with. Required. |
