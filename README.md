@@ -67,6 +67,14 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |
 | SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
 
+#### Special Environment Variables
+This variables are not intended to be used for normal deployment operations:
+
+| env variable | description |
+|--|--|
+| POSTGRES_PORT_5432_TCP_ADDR | Sets the POSTGRES_HOST when the latter is not set. |
+| POSTGRES_PORT_5432_TCP_PORT | Sets POSTGRES_PORT when POSTGRES_HOST is not set. |
+
 ### Manual Backups
 
 By default this container makes daily backups, but you can start a manual backup by running `/backup.sh`:
