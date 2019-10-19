@@ -1,5 +1,5 @@
 #!/bin/sh -e
-TAGS="11 10 9.6 9.5 9.4"
+TAGS="12 11 10 9.6 9.5 9.4"
 
 git push --tags -f
 git reset --hard
