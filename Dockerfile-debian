@@ -10,21 +10,21 @@ RUN set -x \
 	&& chmod a+x /usr/local/bin/go-cron \
 	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
 
-ENV POSTGRES_DB **None** \
-    POSTGRES_DB_FILE **None** \
-    POSTGRES_HOST **None** \
-    POSTGRES_PORT 5432 \
-    POSTGRES_USER **None** \
-    POSTGRES_USER_FILE **None** \
-    POSTGRES_PASSWORD **None** \
-    POSTGRES_PASSWORD_FILE **None** \
-    POSTGRES_EXTRA_OPTS '-Z9' \
-    SCHEDULE '@daily' \
-    BACKUP_DIR '/backups' \
-    BACKUP_KEEP_DAYS 7 \
-    BACKUP_KEEP_WEEKS 4 \
-    BACKUP_KEEP_MONTHS 6 \
-    HEALTHCHECK_PORT 8080
+ENV POSTGRES_DB="**None**" \
+    POSTGRES_DB_FILE="**None**" \
+    POSTGRES_HOST="**None**" \
+    POSTGRES_PORT=5432 \
+    POSTGRES_USER="**None**" \
+    POSTGRES_USER_FILE="**None**" \
+    POSTGRES_PASSWORD="**None**" \
+    POSTGRES_PASSWORD_FILE="**None**" \
+    POSTGRES_EXTRA_OPTS="-Z9" \
+    SCHEDULE="@daily" \
+    BACKUP_DIR="/backups" \
+    BACKUP_KEEP_DAYS=7 \
+    BACKUP_KEEP_WEEKS=4 \
+    BACKUP_KEEP_MONTHS=6 \
+    HEALTHCHECK_PORT=8080
 
 COPY backup.sh /backup.sh
 
