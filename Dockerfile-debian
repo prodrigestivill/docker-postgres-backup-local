@@ -1,8 +1,12 @@
-FROM postgres
+ARG BASETAG=latest
+FROM postgres:$BASETAG
 
+ARG GOCRONVER=v0.0.8
+ARG TARGETOS
+ARG TARGETARCH
 RUN set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* \
-	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/v0.0.8/go-cron-linux-amd64.gz | zcat > /usr/local/bin/go-cron \
+	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron \
 	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
 
