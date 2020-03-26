@@ -79,4 +79,4 @@ for DB in ${POSTGRES_DBS}; do
   find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime +${KEEP_MONTHS} -name "${DB}-*.sql*" -exec rm -rf '{}' ';'
 done
 
-echo "SQL backup uploaded successfully"
+echo "SQL backup created successfully"
