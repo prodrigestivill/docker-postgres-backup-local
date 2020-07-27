@@ -10,11 +10,13 @@ Supports the following Docker architectures: `linux/amd64`, `linux/arm64`, `linu
 ## Usage
 
 Docker:
+
 ```sh
-$ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local
+docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local
 ```
 
 Docker Compose:
+
 ```yaml
 version: '2'
 services:
@@ -47,10 +49,10 @@ services:
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
             - HEALTHCHECK_PORT=80
-
 ```
 
 ### Environment Variables
+
 Most variables are the same as in the [official postgres image](https://hub.docker.com/_/postgres/).
 
 | env variable | description |
@@ -72,6 +74,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
 
 #### Special Environment Variables
+
 This variables are not intended to be used for normal deployment operations:
 
 | env variable | description |
@@ -84,7 +87,7 @@ This variables are not intended to be used for normal deployment operations:
 By default this container makes daily backups, but you can start a manual backup by running `/backup.sh`:
 
 ```sh
-$ docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
+docker run -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname -e POSTGRES_USER=user -e POSTGRES_PASSWORD=password  prodrigestivill/postgres-backup-local /backup.sh
 ```
 
 ### Automatic Periodic Backups
