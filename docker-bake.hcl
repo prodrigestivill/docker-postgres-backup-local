@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-11", "debian-10", "debian-9.6", "debian-9.5", "debian-9.4", "alpine-11", "alpine-10", "alpine-9.6", "alpine-9.5", "alpine-9.4"]
+	targets = ["debian-latest", "alpine-latest", "debian-11", "debian-10", "debian-9.6", "debian-9.5", "alpine-11", "alpine-10", "alpine-9.6", "alpine-9.5"]
 }
 
 target "common" {
@@ -75,16 +75,4 @@ target "alpine-9.5" {
   inherits = ["alpine"]
 	args = {"BASETAG" = "9.5-alpine"}
   tags = ["prodrigestivill/postgres-backup-local:9.5-alpine"]
-}
-
-target "debian-9.4" {
-  inherits = ["debian"]
-	args = {"BASETAG" = "9.4"}
-  tags = ["prodrigestivill/postgres-backup-local:9.4"]
-}
-
-target "alpine-9.4" {
-  inherits = ["alpine"]
-	args = {"BASETAG" = "9.4-alpine"}
-  tags = ["prodrigestivill/postgres-backup-local:9.4-alpine"]
 }
