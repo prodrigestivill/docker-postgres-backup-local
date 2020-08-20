@@ -28,6 +28,11 @@ if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**Non
 fi
 
 #Process vars
+if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
+  PGDUMPCMD="pg_dumpall"
+else
+  PGDUMPCMD="pg_dump"
+fi
 if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
   POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
 elif [ -r "${POSTGRES_DB_FILE}" ]; then
@@ -54,7 +59,8 @@ else
   echo "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
   exit 1
 fi
-POSTGRES_HOST_OPTS="-h ${POSTGRES_HOST} -p ${POSTGRES_PORT} ${POSTGRES_EXTRA_OPTS}"
+export PGHOST="${POSTGRES_HOST}"
+export PGPORT="${POSTGRES_PORT}"
 KEEP_DAYS=${BACKUP_KEEP_DAYS}
 KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
@@ -69,8 +75,8 @@ for DB in ${POSTGRES_DBS}; do
   WFILE="${BACKUP_DIR}/weekly/${DB}-`date +%G%V`${BACKUP_SUFFIX}"
   MFILE="${BACKUP_DIR}/monthly/${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
   #Create dump
-  echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-  pg_dump -f "${DFILE}" ${POSTGRES_HOST_OPTS} ${DB}
+  echo "Creating ${PGDUMPCMD} of ${DB} database from ${POSTGRES_HOST}..."
+  ${PGDUMPCMD} -d ${DB} -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
   #Copy (hardlink) for each entry
   if [ -d "${DFILE}" ]; then
     WFILENEW="${WFILE}-new"

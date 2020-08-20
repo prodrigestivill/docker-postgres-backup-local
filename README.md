@@ -66,6 +66,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
 | POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |
 | POSTGRES_EXTRA_OPTS | Additional options for `pg_dump`. Defaults to `-Z9`. |
+| POSTGRES_CLUSTER | Set to `TRUE` in order to use `pg_dumpall` instead. |
 | POSTGRES_HOST | Postgres connection parameter; postgres host to connect to. Required. |
 | POSTGRES_PASSWORD | Postgres connection parameter; postgres password to connect with. Required. |
 | POSTGRES_PASSWORD_FILE | Alternative to POSTGRES_PASSWORD, for usage with docker secrets. |
