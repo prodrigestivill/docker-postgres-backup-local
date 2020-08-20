@@ -100,3 +100,23 @@ You can change the `SCHEDULE` environment variable in `-e SCHEDULE="@daily"` to 
 More information about the scheduling can be found [here](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules).
 
 Folders `daily`, `weekly` and `monthly` are created and populated using hard links to save disk space.
+
+## Restore examples
+
+Some examples to restore/apply the backups.
+
+### Restore locally
+
+Replace the backupfile name, `$CONTAINER`, `$USERNAME` and `$DBNAME` from the following command:
+
+```sh
+zcat backupfile.sql.gz | docker exec --tty --interactive $CONTAINER psql --username=$USERNAME --dbname=$DBNAME -W
+```
+
+### Restore to a remote server
+
+Replace the backupfile name, `$VERSION`, `$HOSTNAME`, `$PORT`, `$USERNAME` and `$DBNAME` from the following command:
+
+```sh
+zcat backupfile.sql.gz | docker run --rm --tty --interactive postgres:$VERSION psql --host=$HOSTNAME --port=$PORT --username=$USERNAME --dbname=$DBNAME -W
+```
