@@ -58,6 +58,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | env variable | description |
 |--|--|
 | BACKUP_DIR | Directory to save the backup at. Defaults to `/backups`. |
+| BACKUP_SUFFIX | Filename suffix to save the backup. Defaults to `.sql.gz`. |
 | BACKUP_KEEP_DAYS | Number of daily backups to keep before removal. Defaults to `7`. |
 | BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
 | BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
