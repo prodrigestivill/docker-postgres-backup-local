@@ -69,6 +69,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_HOST | Postgres connection parameter; postgres host to connect to. Required. |
 | POSTGRES_PASSWORD | Postgres connection parameter; postgres password to connect with. Required. |
 | POSTGRES_PASSWORD_FILE | Alternative to POSTGRES_PASSWORD, for usage with docker secrets. |
+| POSTGRES_PASSFILE_STORE | Alternative to POSTGRES_PASSWORD in [passfile format](https://www.postgresql.org/docs/12/libpq-pgpass.html), for usage with postgres clusters. |
 | POSTGRES_PORT | Postgres connection parameter; postgres port to connect to. Defaults to `5432`. |
 | POSTGRES_USER | Postgres connection parameter; postgres user to connect with. Required. |
 | POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |

@@ -22,8 +22,8 @@ if [ "${POSTGRES_USER}" = "**None**" -a "${POSTGRES_USER_FILE}" = "**None**" ]; 
   exit 1
 fi
 
-if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
-  echo "You need to set the POSTGRES_PASSWORD or POSTGRES_PASSWORD_FILE environment variable or link to a container named POSTGRES."
+if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
+  echo "You need to set the POSTGRES_PASSWORD or POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE environment variable or link to a container named POSTGRES."
   exit 1
 fi
 
@@ -44,12 +44,14 @@ else
   echo "Missing POSTGRES_USER_FILE file."
   exit 1
 fi
-if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" ]; then
+if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
   export PGPASSWORD="${POSTGRES_PASSWORD}"
 elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
   export PGPASSWORD=$(cat "${POSTGRES_PASSWORD_FILE}")
+elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
+  export PGPASSFILE="${POSTGRES_PASSFILE_STORE}"
 else
-  echo "Missing POSTGRES_PASSWORD_FILE file."
+  echo "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
   exit 1
 fi
 POSTGRES_HOST_OPTS="-h ${POSTGRES_HOST} -p ${POSTGRES_PORT} ${POSTGRES_EXTRA_OPTS}"

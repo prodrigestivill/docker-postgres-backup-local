@@ -18,6 +18,7 @@ ENV POSTGRES_DB="**None**" \
     POSTGRES_USER_FILE="**None**" \
     POSTGRES_PASSWORD="**None**" \
     POSTGRES_PASSWORD_FILE="**None**" \
+    POSTGRES_PASSFILE_STORE="**None**" \
     POSTGRES_EXTRA_OPTS="-Z9" \
     SCHEDULE="@daily" \
     BACKUP_DIR="/backups" \
