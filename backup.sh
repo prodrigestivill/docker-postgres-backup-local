@@ -28,11 +28,6 @@ if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**Non
 fi
 
 #Process vars
-if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
-  PGDUMPCMD="pg_dumpall"
-else
-  PGDUMPCMD="pg_dump"
-fi
 if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
   POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
 elif [ -r "${POSTGRES_DB_FILE}" ]; then
@@ -75,8 +70,13 @@ for DB in ${POSTGRES_DBS}; do
   WFILE="${BACKUP_DIR}/weekly/${DB}-`date +%G%V`${BACKUP_SUFFIX}"
   MFILE="${BACKUP_DIR}/monthly/${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
   #Create dump
-  echo "Creating ${PGDUMPCMD} of ${DB} database from ${POSTGRES_HOST}..."
-  ${PGDUMPCMD} -d ${DB} -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
+  if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
+    echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
+    pg_dumpall -l "${DB}" -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
+  else
+    echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
+    pg_dump -d "${DB}" -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
+  fi
   #Copy (hardlink) for each entry
   if [ -d "${DFILE}" ]; then
     WFILENEW="${WFILE}-new"
