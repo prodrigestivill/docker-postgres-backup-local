@@ -9,12 +9,12 @@ target "common" {
 
 target "debian" {
 	inherits = ["common"]
-	dockerfile = "Dockerfile-debian"
+	dockerfile = "debian.Dockerfile"
 }
 
 target "alpine" {
 	inherits = ["common"]
-	dockerfile = "Dockerfile-alpine"
+	dockerfile = "alpine.Dockerfile"
 }
 
 target "debian-latest" {
