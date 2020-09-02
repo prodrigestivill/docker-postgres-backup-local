@@ -4,8 +4,8 @@ To build and push all images to it's own repository.
 
 ## Prepare environment
 
- * Configure you system to use [Docker Buildx](https://docs.docker.com/buildx/working-with-buildx/).
- * Prepare crosscompile environment (see below).
+* Configure you system to use [Docker Buildx](https://docs.docker.com/buildx/working-with-buildx/).
+* Prepare crosscompile environment (see below).
 
 ### Prepare crosscompile environment
 
