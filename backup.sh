@@ -72,7 +72,7 @@ for DB in ${POSTGRES_DBS}; do
   #Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dumpall -l "${DB}" -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
+    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip -9 > "${DFILE}"
   else
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dump -d "${DB}" -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
