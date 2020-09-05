@@ -49,7 +49,7 @@ services:
             - BACKUP_KEEP_DAYS=7
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
-            - HEALTHCHECK_PORT=80
+            - HEALTHCHECK_PORT=8080
 ```
 
 For security reasons it is recommended to run it as user `postgres:postgres`.
