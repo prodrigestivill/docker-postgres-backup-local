@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-11", "debian-10", "debian-9.6", "debian-9.5", "alpine-11", "alpine-10", "alpine-9.6", "alpine-9.5"]
+	targets = ["debian-latest", "alpine-latest", "debian-12", "debian-11", "debian-10", "debian-9.6", "debian-9.5", "alpine-12", "alpine-11", "alpine-10", "alpine-9.6", "alpine-9.5"]
 }
 
 target "common" {
@@ -19,14 +19,26 @@ target "alpine" {
 
 target "debian-latest" {
 	inherits = ["debian"]
-	args = {"BASETAG" = "12"}
-	tags = ["prodrigestivill/postgres-backup-local:latest", "prodrigestivill/postgres-backup-local:12"]
+	args = {"BASETAG" = "13"}
+	tags = ["prodrigestivill/postgres-backup-local:latest", "prodrigestivill/postgres-backup-local:13"]
 }
 
 target "alpine-latest" {
 	inherits = ["alpine"]
+	args = {"BASETAG" = "13-alpine"}
+	tags = ["prodrigestivill/postgres-backup-local:alpine", "prodrigestivill/postgres-backup-local:13-alpine"]
+}
+
+target "debian-12" {
+  inherits = ["debian"]
+	args = {"BASETAG" = "12"}
+  tags = ["prodrigestivill/postgres-backup-local:12"]
+}
+
+target "alpine-12" {
+  inherits = ["alpine"]
 	args = {"BASETAG" = "12-alpine"}
-	tags = ["prodrigestivill/postgres-backup-local:alpine", "prodrigestivill/postgres-backup-local:12-alpine"]
+  tags = ["prodrigestivill/postgres-backup-local:12-alpine"]
 }
 
 target "debian-11" {
