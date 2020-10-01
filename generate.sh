@@ -52,15 +52,15 @@ EOF
 for TAG in $TAGS_EXTRA; do cat >> "$DOCKER_BAKE_FILE" << EOF
 
 target "debian-$TAG" {
-  inherits = ["debian"]
+	inherits = ["debian"]
 	args = {"BASETAG" = "$TAG"}
-  tags = ["$IMAGE_NAME:$TAG"]
+	tags = ["$IMAGE_NAME:$TAG"]
 }
 
 target "alpine-$TAG" {
-  inherits = ["alpine"]
+	inherits = ["alpine"]
 	args = {"BASETAG" = "$TAG-alpine"}
-  tags = ["$IMAGE_NAME:$TAG-alpine"]
+	tags = ["$IMAGE_NAME:$TAG-alpine"]
 }
 EOF
 done
