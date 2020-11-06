@@ -54,6 +54,14 @@ services:
 
 For security reasons it is recommended to run it as user `postgres:postgres`.
 
+In case of running as `postgres` user, the system administrator must initialize the permission of the destination folder as follows:
+```sh
+# for default images (debian)
+mkdir -p /var/opt/pgbackups && chown -R 999:999 /var/opt/pgbackups
+# for alpine images
+mkdir -p /var/opt/pgbackups && chown -R 70:70 /var/opt/pgbackups
+```
+
 ### Environment Variables
 
 Most variables are the same as in the [official postgres image](https://hub.docker.com/_/postgres/).
