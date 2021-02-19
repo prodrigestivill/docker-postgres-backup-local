@@ -44,7 +44,7 @@ services:
             - POSTGRES_USER=username
             - POSTGRES_PASSWORD=password
          #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
-            - POSTGRES_EXTRA_OPTS=-Z9 --schema=public --blobs
+            - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
             - SCHEDULE=@daily
             - BACKUP_KEEP_DAYS=7
             - BACKUP_KEEP_WEEKS=4
@@ -76,7 +76,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
 | POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |
-| POSTGRES_EXTRA_OPTS | Additional [options](https://www.postgresql.org/docs/12/app-pgdump.html#PG-DUMP-OPTIONS) for `pg_dump` (or `pg_dumpall` [options](https://www.postgresql.org/docs/12/app-pg-dumpall.html#id-1.9.4.13.6) if POSTGRES_CLUSTER is set). Defaults to `-Z9`. |
+| POSTGRES_EXTRA_OPTS | Additional [options](https://www.postgresql.org/docs/12/app-pgdump.html#PG-DUMP-OPTIONS) for `pg_dump` (or `pg_dumpall` [options](https://www.postgresql.org/docs/12/app-pg-dumpall.html#id-1.9.4.13.6) if POSTGRES_CLUSTER is set). Defaults to `-Z6`. |
 | POSTGRES_CLUSTER | Set to `TRUE` in order to use `pg_dumpall` instead. Also set POSTGRES_EXTRA_OPTS to any value or empty since the default value is not compatible with `pg_dumpall`. |
 | POSTGRES_HOST | Postgres connection parameter; postgres host to connect to. Required. |
 | POSTGRES_PASSWORD | Postgres connection parameter; postgres password to connect with. Required. |
