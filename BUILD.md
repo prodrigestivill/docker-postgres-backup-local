@@ -14,7 +14,7 @@ In order to work in Arch Linux the following initialization commands will be req
 ```sh
 docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
 docker buildx rm multibuilder
-docker buildx create --name multibuilder --platform linux/amd64,linux/arm64,linux/arm/v7 --driver docker-container --use
+docker buildx create --name multibuilder --platform linux/amd64,linux/arm64,linux/arm/v7,linux/s390x,linux/ppc64le --driver docker-container --use
 docker buildx inspect --bootstrap
 ```
 
