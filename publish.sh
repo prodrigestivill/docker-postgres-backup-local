@@ -22,3 +22,5 @@ BUILDREV=$(git rev-parse --short HEAD)
 echo "Starting building and publish revision $BUILDREV..."
 export BUILDREV
 docker buildx bake --pull --push -f "$TMPFILE"
+
+echo "Successfully build and pushed."
