@@ -21,6 +21,10 @@ group "default" {
 	targets = [$T]
 }
 
+variable "BUILDREV" {
+	default = ""
+}
+
 target "common" {
 	platforms = [$P]
 	args = {"GOCRONVER" = "$GOCRONVER"}
@@ -39,13 +43,21 @@ target "alpine" {
 target "debian-latest" {
 	inherits = ["debian"]
 	args = {"BASETAG" = "$MAIN_TAG"}
-	tags = ["$IMAGE_NAME:latest", "$IMAGE_NAME:$MAIN_TAG"]
+	tags = [
+		"$IMAGE_NAME:latest",
+		"$IMAGE_NAME:$MAIN_TAG",
+		notequal("", BUILDREV) ? "$IMAGE_NAME:$MAIN_TAG-debian-\${BUILDREV}" : ""
+	]
 }
 
 target "alpine-latest" {
 	inherits = ["alpine"]
 	args = {"BASETAG" = "$MAIN_TAG-alpine"}
-	tags = ["$IMAGE_NAME:alpine", "$IMAGE_NAME:$MAIN_TAG-alpine"]
+	tags = [
+		"$IMAGE_NAME:alpine",
+		"$IMAGE_NAME:$MAIN_TAG-alpine",
+		notequal("", BUILDREV) ? "$IMAGE_NAME:$MAIN_TAG-alpine-\${BUILDREV}" : ""
+	]
 }
 EOF
 
@@ -54,13 +66,19 @@ for TAG in $TAGS_EXTRA; do cat >> "$DOCKER_BAKE_FILE" << EOF
 target "debian-$TAG" {
 	inherits = ["debian"]
 	args = {"BASETAG" = "$TAG"}
-	tags = ["$IMAGE_NAME:$TAG"]
+	tags = [
+		"$IMAGE_NAME:$TAG",
+		notequal("", BUILDREV) ? "$IMAGE_NAME:$TAG-debian-\${BUILDREV}" : ""
+	]
 }
 
 target "alpine-$TAG" {
 	inherits = ["alpine"]
 	args = {"BASETAG" = "$TAG-alpine"}
-	tags = ["$IMAGE_NAME:$TAG-alpine"]
+	tags = [
+		"$IMAGE_NAME:$TAG-alpine",
+		notequal("", BUILDREV) ? "$IMAGE_NAME:$TAG-alpine-\${BUILDREV}" : ""
+	]
 }
 EOF
 done

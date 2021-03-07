@@ -9,13 +9,16 @@ TMPFILE=$(mktemp)
 trap 'rm -vf "$TMPFILE"' EXIT
 
 if [ -n "$@" ]; then
-  export TAGS="$@"
+  TAGS="$@"
   echo "Generate configuration for only this tags: $TAGS"
+  export TAGS
 else
   echo "Generate configuration for all predefined tags."
 fi
 ./generate.sh "$TMPFILE"
 echo "Generated docker bake HCL script at: $TMPFILE"
 
-echo "Starting building and publish..."
-docker buildx bake --pull --set common.output=type=registry -f "$TMPFILE"
+BUILDREV=$(git rev-parse --short HEAD)
+echo "Starting building and publish revision $BUILDREV..."
+export BUILDREV
+docker buildx bake --pull --push -f "$TMPFILE"

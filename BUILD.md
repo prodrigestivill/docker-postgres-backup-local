@@ -39,5 +39,11 @@ docker buildx bake --pull -f config.hcl
 In order to publish directly to the repository run this command instead:
 
 ```sh
-docker buildx bake --pull --set common.output=type=registry -f config.hcl
+docker buildx bake --pull --push -f config.hcl
+```
+
+Also, optionally, it can also generate build revision tags from last git commit (like `./publish.sh` script does):
+
+```sh
+BUILDREV=$(git rev-parse --short HEAD) docker buildx bake --pull --push -f config.hcl
 ```
