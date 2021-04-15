@@ -100,3 +100,8 @@ for DB in ${POSTGRES_DBS}; do
 done
 
 echo "SQL backup created successfully"
+
+if [ "${POST_BACKUP_HOOK}" != "**None**" ]; then
+  echo "Execute post-backup hook"
+  ${POST_BACKUP_HOOK}
+fi
