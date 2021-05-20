@@ -50,6 +50,7 @@ services:
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
             - HEALTHCHECK_PORT=8080
+         #  - POST_BACKUP_HOOK=""
 ```
 
 For security reasons it is recommended to run it as user `postgres:postgres`.
@@ -86,6 +87,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_USER | Postgres connection parameter; postgres user to connect with. Required. |
 | POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |
 | SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
+| POST_BACKUP_HOOK | Shell command executed when backup is complete. Optional |
 
 #### Special Environment Variables
 
