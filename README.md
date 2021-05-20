@@ -128,8 +128,8 @@ zcat backupfile.sql.gz | docker exec --tty --interactive $CONTAINER psql --usern
 
 ### Restore to a remote server
 
-Replace the backupfile name, `$VERSION`, `$HOSTNAME`, `$PORT`, `$USERNAME` and `$DBNAME` from the following command:
+Replace `$BACKUPFILE`, `$VERSION`, `$HOSTNAME`, `$PORT`, `$USERNAME` and `$DBNAME` from the following command:
 
 ```sh
-zcat backupfile.sql.gz | docker run --rm --tty --interactive postgres:$VERSION psql --host=$HOSTNAME --port=$PORT --username=$USERNAME --dbname=$DBNAME -W
+docker run --rm --tty --interactive -v $BACKUPFILE:/tmp/backupfile.sql.gz postgres:$VERSION /bin/sh -c "zcat /tmp/backupfile.sql.gz | psql --host=$HOSTNAME --port=$PORT --username=$USERNAME --dbname=$DBNAME -W"
 ```
