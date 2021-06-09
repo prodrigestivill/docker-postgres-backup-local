@@ -92,11 +92,31 @@ for DB in ${POSTGRES_DBS}; do
     ln -vf "${DFILE}" "${WFILE}"
     ln -vf "${DFILE}" "${MFILE}"
   fi
+
   #Clean old files
+
   echo "Cleaning older than ${KEEP_DAYS} days for ${DB} database from ${POSTGRES_HOST}..."
   find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime +${KEEP_DAYS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
   find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime +${KEEP_WEEKS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
   find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime +${KEEP_MONTHS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
+
+  if [ "${BACKUP_KEEP_N_DAILY}" != "**None**" ]; then
+    echo "Cleaning those that are not the most recent ${BACKUP_KEEP_N_DAILY} daily for ${DB} database from ${POSTGRES_HOST}..."
+    find "${BACKUP_DIR}/daily" -maxdepth 1 -name "${DB}-*${BACKUP_SUFFIX}" -printf "%T@ %p\n" \
+      | sort -nr | cut -d " " -f2 | tail -n +$(($BACKUP_KEEP_N_DAILY+1)) | xargs rm -rf
+  fi
+
+  if [ "${BACKUP_KEEP_N_WEEKLY}" != "**None**" ]; then
+    echo "Cleaning those that are not the most recent ${BACKUP_KEEP_N_WEEKLY} weekly for ${DB} database from ${POSTGRES_HOST}..."
+    find "${BACKUP_DIR}/weekly" -maxdepth 1 -name "${DB}-*${BACKUP_SUFFIX}" -printf "%T@ %p\n" \
+      | sort -nr | cut -d " " -f2 | tail -n +$(($BACKUP_KEEP_N_WEEKLY+1)) | xargs rm -rf
+  fi
+
+  if [ "${BACKUP_KEEP_N_MONTHLY}" != "**None**" ]; then
+    echo "Cleaning those that are not the most recent ${BACKUP_KEEP_N_MONTHLY} monthly for ${DB} database from ${POSTGRES_HOST}..."
+    find "${BACKUP_DIR}/monthly" -maxdepth 1 -name "${DB}-*${BACKUP_SUFFIX}" -printf "%T@ %p\n" \
+      | sort -nr | cut -d " " -f2 | tail -n +$(($BACKUP_KEEP_N_MONTHLY+1)) | xargs rm -rf
+  fi
 done
 
 echo "SQL backup created successfully"

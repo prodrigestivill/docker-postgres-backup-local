@@ -70,9 +70,12 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 |--|--|
 | BACKUP_DIR | Directory to save the backup at. Defaults to `/backups`. |
 | BACKUP_SUFFIX | Filename suffix to save the backup. Defaults to `.sql.gz`. |
-| BACKUP_KEEP_DAYS | Number of daily backups to keep before removal. Defaults to `7`. |
-| BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
-| BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
+| BACKUP_KEEP_DAYS | Number of days to keep backups for. Defaults to `7`. |
+| BACKUP_KEEP_WEEKS | Number of weeks to keep backups for. Defaults to `4`. |
+| BACKUP_KEEP_MONTHS | Number of months to keep backups for. Defaults to `6`. |
+| BACKUP_KEEP_N_DAILY | Number of daily backups to keep before removal. Disabled by default. |
+| BACKUP_KEEP_N_WEEKLY | Number of weekly backups to keep before removal. Disabled by default. |
+| BACKUP_KEEP_N_MONTHLY | Number of monthly backups to keep before removal. Disabled by default. |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
 | POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |
