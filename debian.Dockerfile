@@ -27,6 +27,9 @@ ENV POSTGRES_DB="**None**" \
     BACKUP_KEEP_DAYS=7 \
     BACKUP_KEEP_WEEKS=4 \
     BACKUP_KEEP_MONTHS=6 \
+    BACKUP_KEEP_N_DAILY="**None**" \
+    BACKUP_KEEP_N_WEEKLY="**None**" \
+    BACKUP_KEEP_N_MONTHLY="**None**" \
     HEALTHCHECK_PORT=8080
 
 COPY backup.sh /backup.sh
