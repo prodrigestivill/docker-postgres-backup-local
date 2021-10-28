@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-12", "debian-11", "debian-10", "debian-9.6", "debian-9.5", "alpine-12", "alpine-11", "alpine-10", "alpine-9.6", "alpine-9.5"]
+	targets = ["debian-latest", "alpine-latest", "debian-13", "debian-12", "debian-11", "debian-10", "debian-9.6", "alpine-13", "alpine-12", "alpine-11", "alpine-10", "alpine-9.6"]
 }
 
 variable "BUILDREV" {
@@ -23,19 +23,37 @@ target "alpine" {
 
 target "debian-latest" {
 	inherits = ["debian"]
-	args = {"BASETAG" = "13"}
+	args = {"BASETAG" = "14"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:latest",
-		"prodrigestivill/postgres-backup-local:13",
-		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:13-debian-${BUILDREV}" : ""
+		"prodrigestivill/postgres-backup-local:14",
+		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:14-debian-${BUILDREV}" : ""
 	]
 }
 
 target "alpine-latest" {
 	inherits = ["alpine"]
-	args = {"BASETAG" = "13-alpine"}
+	args = {"BASETAG" = "14-alpine"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:alpine",
+		"prodrigestivill/postgres-backup-local:14-alpine",
+		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:14-alpine-${BUILDREV}" : ""
+	]
+}
+
+target "debian-13" {
+	inherits = ["debian"]
+	args = {"BASETAG" = "13"}
+	tags = [
+		"prodrigestivill/postgres-backup-local:13",
+		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:13-debian-${BUILDREV}" : ""
+	]
+}
+
+target "alpine-13" {
+	inherits = ["alpine"]
+	args = {"BASETAG" = "13-alpine"}
+	tags = [
 		"prodrigestivill/postgres-backup-local:13-alpine",
 		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:13-alpine-${BUILDREV}" : ""
 	]
@@ -110,23 +128,5 @@ target "alpine-9.6" {
 	tags = [
 		"prodrigestivill/postgres-backup-local:9.6-alpine",
 		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:9.6-alpine-${BUILDREV}" : ""
-	]
-}
-
-target "debian-9.5" {
-	inherits = ["debian"]
-	args = {"BASETAG" = "9.5"}
-	tags = [
-		"prodrigestivill/postgres-backup-local:9.5",
-		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:9.5-debian-${BUILDREV}" : ""
-	]
-}
-
-target "alpine-9.5" {
-	inherits = ["alpine"]
-	args = {"BASETAG" = "9.5-alpine"}
-	tags = [
-		"prodrigestivill/postgres-backup-local:9.5-alpine",
-		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:9.5-alpine-${BUILDREV}" : ""
 	]
 }
