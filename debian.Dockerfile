@@ -11,7 +11,11 @@ RUN set -x \
 	&& ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
 	&& ln -s /usr/bin/dpkg-deb /usr/sbin/dpkg-deb \
 	&& ln -s /bin/tar /usr/sbin/tar \
-	&& ln -s /bin/rm /usr/sbin/rm
+	&& ln -s /bin/rm /usr/sbin/rm \
+	&& ln -s /usr/bin/dpkg-split /usr/local/sbin/dpkg-split \
+	&& ln -s /usr/bin/dpkg-deb /usr/local/sbin/dpkg-deb \
+	&& ln -s /bin/tar /usr/local/sbin/tar \
+	&& ln -s /bin/rm /usr/local/sbin/rm
 #
 
 RUN set -x \
