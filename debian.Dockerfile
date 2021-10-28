@@ -4,6 +4,16 @@ FROM postgres:$BASETAG
 ARG GOCRONVER=v0.0.10
 ARG TARGETOS
 ARG TARGETARCH
+
+# FIX Debian cross build
+ARG DEBIAN_FRONTEND=noninteractive
+RUN set -x \
+	&& ln -s /usr/bin/dpkg-split /usr/sbin/dpkg-split \
+	&& ln -s /usr/bin/dpkg-deb /usr/sbin/dpkg-deb \
+	&& ln -s /bin/tar /usr/sbin/tar \
+	&& ln -s /bin/rm /usr/sbin/rm
+#
+
 RUN set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* \
 	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH.gz | zcat > /usr/local/bin/go-cron \
