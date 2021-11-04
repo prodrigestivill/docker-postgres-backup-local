@@ -119,15 +119,15 @@ Folders `daily`, `weekly` and `monthly` are created and populated using hard lin
 
 Some examples to restore/apply the backups.
 
-### Restore locally
+### Restore using the same container
 
-Replace the backupfile name, `$CONTAINER`, `$USERNAME` and `$DBNAME` from the following command:
+To restore using the same backup container, replace `$BACKUPFILE`, `$CONTAINER`, `$USERNAME` and `$DBNAME` from the following command:
 
 ```sh
-zcat backupfile.sql.gz | docker exec --tty --interactive $CONTAINER psql --username=$USERNAME --dbname=$DBNAME -W
+docker exec --tty --interactive $CONTAINER /bin/sh -c "zcat $BACKUPFILE | psql --username=$USERNAME --dbname=$DBNAME -W"
 ```
 
-### Restore to a remote server
+### Restore using a new container
 
 Replace `$BACKUPFILE`, `$VERSION`, `$HOSTNAME`, `$PORT`, `$USERNAME` and `$DBNAME` from the following command:
 
