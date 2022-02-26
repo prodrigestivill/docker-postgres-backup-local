@@ -25,7 +25,7 @@ jobs:
     steps:
       - uses: actions/checkout@v2
 
-      - name: Test backup script
+      - name: Test backup script for pg_dump
         env:
           POSTGRES_DB: "database"
           POSTGRES_USER: "user"
@@ -46,13 +46,40 @@ jobs:
           BACKUP_KEEP_MONTHS: 6
           BACKUP_KEEP_MINS: 1440
         run: |
-          echo "Test backup script..."
+          echo "Test backup script for pg_dump..."
           rm -fR "$BACKUP_DIR"
           mkdir -p "$BACKUP_DIR"
           bash -x backup.sh
           echo "Generated backup files:"
           ls -laR "$BACKUP_DIR"
-      - name: Test backup script for cluster mode
+      - name: Test backup script for pg_dump with directories
+        env:
+          POSTGRES_DB: "database"
+          POSTGRES_USER: "user"
+          POSTGRES_PASSWORD: "test"
+          POSTGRES_HOST: "127.0.0.1"
+          POSTGRES_PORT: 5432
+          POSTGRES_EXTRA_OPTS: "-Z0 -Fd"
+          BACKUP_SUFFIX: ""
+          BACKUP_DIR: ".data"
+          # Defaults
+          POSTGRES_DB_FILE: "**None**"
+          POSTGRES_USER_FILE: "**None**"
+          POSTGRES_PASSWORD_FILE: "**None**"
+          POSTGRES_PASSFILE_STORE: "**None**"
+          POSTGRES_CLUSTER: "FALSE"
+          BACKUP_KEEP_DAYS: 7
+          BACKUP_KEEP_WEEKS: 4
+          BACKUP_KEEP_MONTHS: 6
+          BACKUP_KEEP_MINS: 1440
+        run: |
+          echo "Test backup script for pg_dump with directories..."
+          rm -fR "$BACKUP_DIR"
+          mkdir -p "$BACKUP_DIR"
+          bash -x backup.sh
+          echo "Generated backup files:"
+          ls -laR "$BACKUP_DIR"
+      - name: Test backup script for pg_dumpall
         env:
           POSTGRES_CLUSTER: "TRUE"
           POSTGRES_DB: "database"
@@ -73,7 +100,7 @@ jobs:
           BACKUP_KEEP_MONTHS: 6
           BACKUP_KEEP_MINS: 1440
         run: |
-          echo "Test backup script in cluster mode..."
+          echo "Test backup script for pg_dumpall..."
           rm -fR "$BACKUP_DIR"
           mkdir -p "$BACKUP_DIR"
           bash -x backup.sh
