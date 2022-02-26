@@ -20,8 +20,8 @@ RUN set -x \
 
 RUN set -x \
 	&& apt-get update && apt-get install -y --no-install-recommends ca-certificates curl && rm -rf /var/lib/apt/lists/* \
-	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH.gz | zcat > /usr/local/bin/go-cron \
-	&& chmod a+x /usr/local/bin/go-cron \
+	&& curl -o /usr/local/bin/go-cron.gz -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH.gz \
+  && gzip -vnd /usr/local/bin/go-cron.gz && chmod a+x /usr/local/bin/go-cron \
 	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
 
 ENV POSTGRES_DB="**None**" \
