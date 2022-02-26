@@ -45,8 +45,11 @@ jobs:
           BACKUP_KEEP_WEEKS: 4
           BACKUP_KEEP_MONTHS: 6
         run: |
+          echo "Test backup script..."
           mkdir -p "$BACKUP_DIR"
           sh -xe backup.sh
+          echo "Generated backup files:"
+          ls -laR "$BACKUP_DIR"
 
   test-docker:
     if: ${{ github.event_name == 'pull_request' || github.ref != 'refs/heads/main' }}
