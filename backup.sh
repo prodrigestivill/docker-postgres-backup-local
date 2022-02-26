@@ -1,6 +1,5 @@
-#! /bin/sh
-
-set -e
+#!/usr/bin/env bash
+set -Eeo pipefail
 
 if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
   echo "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
