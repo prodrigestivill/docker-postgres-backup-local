@@ -6,23 +6,19 @@ variable "BUILDREV" {
 	default = ""
 }
 
-target "common" {
-	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
-	args = {"GOCRONVER" = "v0.0.10"}
-}
-
 target "debian" {
-	inherits = ["common"]
+	args = {"GOCRONVER" = "v0.0.10"}
 	dockerfile = "debian.Dockerfile"
 }
 
 target "alpine" {
-	inherits = ["common"]
+	args = {"GOCRONVER" = "v0.0.10"}
 	dockerfile = "alpine.Dockerfile"
 }
 
 target "debian-latest" {
 	inherits = ["debian"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "14"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:latest",
@@ -33,6 +29,7 @@ target "debian-latest" {
 
 target "alpine-latest" {
 	inherits = ["alpine"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "14-alpine"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:alpine",
@@ -43,6 +40,7 @@ target "alpine-latest" {
 
 target "debian-13" {
 	inherits = ["debian"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "13"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:13",
@@ -52,6 +50,7 @@ target "debian-13" {
 
 target "alpine-13" {
 	inherits = ["alpine"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "13-alpine"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:13-alpine",
@@ -61,6 +60,7 @@ target "alpine-13" {
 
 target "debian-12" {
 	inherits = ["debian"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "12"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:12",
@@ -70,6 +70,7 @@ target "debian-12" {
 
 target "alpine-12" {
 	inherits = ["alpine"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "12-alpine"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:12-alpine",
@@ -79,6 +80,7 @@ target "alpine-12" {
 
 target "debian-11" {
 	inherits = ["debian"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
 	args = {"BASETAG" = "11"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:11",
@@ -88,6 +90,7 @@ target "debian-11" {
 
 target "alpine-11" {
 	inherits = ["alpine"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "11-alpine"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:11-alpine",
@@ -97,6 +100,7 @@ target "alpine-11" {
 
 target "debian-10" {
 	inherits = ["debian"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
 	args = {"BASETAG" = "10"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:10",
@@ -106,6 +110,7 @@ target "debian-10" {
 
 target "alpine-10" {
 	inherits = ["alpine"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "10-alpine"}
 	tags = [
 		"prodrigestivill/postgres-backup-local:10-alpine",
