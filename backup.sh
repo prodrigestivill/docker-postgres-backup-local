@@ -67,10 +67,14 @@ mkdir -p "${BACKUP_DIR}/last/" "${BACKUP_DIR}/daily/" "${BACKUP_DIR}/weekly/" "$
 #Loop all databases
 for DB in ${POSTGRES_DBS}; do
   #Initialize filename vers
-  FILE="${BACKUP_DIR}/last/${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
-  DFILE="${BACKUP_DIR}/daily/${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
-  WFILE="${BACKUP_DIR}/weekly/${DB}-`date +%G%V`${BACKUP_SUFFIX}"
-  MFILE="${BACKUP_DIR}/monthly/${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
+  LAST_FILENAME="${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
+  DAILY_FILENAME="${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
+  WEEKLY_FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
+  MONTHY_FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
+  FILE="${BACKUP_DIR}/last/${LAST_FILENAME}"
+  DFILE="${BACKUP_DIR}/daily/${DAILY_FILENAME}"
+  WFILE="${BACKUP_DIR}/weekly/${WEEKLY_FILENAME}"
+  MFILE="${BACKUP_DIR}/monthly/${MONTHY_FILENAME}"
   #Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
@@ -98,6 +102,11 @@ for DB in ${POSTGRES_DBS}; do
     ln -vf "${FILE}" "${WFILE}"
     ln -vf "${FILE}" "${MFILE}"
   fi
+  # Update latest symlinks
+  ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
+  ln -svf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
+  ln -svf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
+  ln -svf "${MONTHY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
   #Clean old files
   echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
   find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
