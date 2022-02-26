@@ -47,8 +47,36 @@ jobs:
           BACKUP_KEEP_MINS: 1440
         run: |
           echo "Test backup script..."
+          rm -fR "$BACKUP_DIR"
           mkdir -p "$BACKUP_DIR"
-          sh -xe backup.sh
+          bash -x backup.sh
+          echo "Generated backup files:"
+          ls -laR "$BACKUP_DIR"
+      - name: Test backup script for cluster mode
+        env:
+          POSTGRES_CLUSTER: "TRUE"
+          POSTGRES_DB: "database"
+          POSTGRES_USER: "user"
+          POSTGRES_PASSWORD: "test"
+          POSTGRES_HOST: "127.0.0.1"
+          POSTGRES_PORT: 5432
+          POSTGRES_EXTRA_OPTS: ""
+          BACKUP_DIR: ".data"
+          # Defaults
+          POSTGRES_DB_FILE: "**None**"
+          POSTGRES_USER_FILE: "**None**"
+          POSTGRES_PASSWORD_FILE: "**None**"
+          POSTGRES_PASSFILE_STORE: "**None**"
+          BACKUP_SUFFIX: ".sql.gz"
+          BACKUP_KEEP_DAYS: 7
+          BACKUP_KEEP_WEEKS: 4
+          BACKUP_KEEP_MONTHS: 6
+          BACKUP_KEEP_MINS: 1440
+        run: |
+          echo "Test backup script in cluster mode..."
+          rm -fR "$BACKUP_DIR"
+          mkdir -p "$BACKUP_DIR"
+          bash -x backup.sh
           echo "Generated backup files:"
           ls -laR "$BACKUP_DIR"
 
