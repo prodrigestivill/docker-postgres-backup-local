@@ -56,47 +56,54 @@ else
 fi
 export PGHOST="${POSTGRES_HOST}"
 export PGPORT="${POSTGRES_PORT}"
+KEEP_MINS=${BACKUP_KEEP_MINS}
 KEEP_DAYS=${BACKUP_KEEP_DAYS}
 KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
 
 #Initialize dirs
-mkdir -p "${BACKUP_DIR}/daily/" "${BACKUP_DIR}/weekly/" "${BACKUP_DIR}/monthly/"
+mkdir -p "${BACKUP_DIR}/last/" "${BACKUP_DIR}/daily/" "${BACKUP_DIR}/weekly/" "${BACKUP_DIR}/monthly/"
 
 #Loop all databases
 for DB in ${POSTGRES_DBS}; do
   #Initialize filename vers
-  DFILE="${BACKUP_DIR}/daily/${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
+  FILE="${BACKUP_DIR}/last/${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
+  DFILE="${BACKUP_DIR}/daily/${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
   WFILE="${BACKUP_DIR}/weekly/${DB}-`date +%G%V`${BACKUP_SUFFIX}"
   MFILE="${BACKUP_DIR}/monthly/${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
   #Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${DFILE}"
+    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
   else
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dump -d "${DB}" -f "${DFILE}" ${POSTGRES_EXTRA_OPTS}
+    pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
   fi
   #Copy (hardlink) for each entry
-  if [ -d "${DFILE}" ]; then
+  if [ -d "${FILE}" ]; then
+    DFILENEW="${DFILE}-new"
     WFILENEW="${WFILE}-new"
     MFILENEW="${MFILE}-new"
-    rm -rf "${WFILENEW}" "${MFILENEW}"
-    mkdir "${WFILENEW}" "${MFILENEW}"
-    ln -f "${DFILE}/"* "${WFILENEW}/"
-    ln -f "${DFILE}/"* "${MFILENEW}/"
-    rm -rf "${WFILE}" "${MFILE}"
+    rm -rf "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
+    mkdir "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
+    ln -f "${FILE}/"* "${DFILENEW}/"
+    ln -f "${FILE}/"* "${WFILENEW}/"
+    ln -f "${FILE}/"* "${MFILENEW}/"
+    rm -rf "${DFILE}" "${WFILE}" "${MFILE}"
+    mv -v "${DFILENEW}" "${DFILE}"
     mv -v "${WFILENEW}" "${WFILE}"
     mv -v "${MFILENEW}" "${MFILE}"
   else
-    ln -vf "${DFILE}" "${WFILE}"
-    ln -vf "${DFILE}" "${MFILE}"
+    ln -vf "${FILE}" "${DFILE}"
+    ln -vf "${FILE}" "${WFILE}"
+    ln -vf "${FILE}" "${MFILE}"
   fi
   #Clean old files
-  echo "Cleaning older than ${KEEP_DAYS} days for ${DB} database from ${POSTGRES_HOST}..."
-  find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime +${KEEP_DAYS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
-  find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime +${KEEP_WEEKS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
-  find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime +${KEEP_MONTHS} -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
+  echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
+  find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
+  find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime "+${KEEP_DAYS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
+  find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime "+${KEEP_WEEKS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
+  find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime "+${KEEP_MONTHS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
 done
 
 echo "SQL backup created successfully"

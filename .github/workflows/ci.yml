@@ -44,6 +44,7 @@ jobs:
           BACKUP_KEEP_DAYS: 7
           BACKUP_KEEP_WEEKS: 4
           BACKUP_KEEP_MONTHS: 6
+          BACKUP_KEEP_MINS: 1440
         run: |
           echo "Test backup script..."
           mkdir -p "$BACKUP_DIR"
