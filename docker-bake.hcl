@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-13", "debian-12", "debian-11", "debian-10", "debian-9.6", "alpine-13", "alpine-12", "alpine-11", "alpine-10", "alpine-9.6"]
+	targets = ["debian-latest", "alpine-latest", "debian-13", "debian-12", "debian-11", "debian-10", "alpine-13", "alpine-12", "alpine-11", "alpine-10"]
 }
 
 variable "BUILDREV" {
@@ -110,23 +110,5 @@ target "alpine-10" {
 	tags = [
 		"prodrigestivill/postgres-backup-local:10-alpine",
 		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:10-alpine-${BUILDREV}" : ""
-	]
-}
-
-target "debian-9.6" {
-	inherits = ["debian"]
-	args = {"BASETAG" = "9.6"}
-	tags = [
-		"prodrigestivill/postgres-backup-local:9.6",
-		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:9.6-debian-${BUILDREV}" : ""
-	]
-}
-
-target "alpine-9.6" {
-	inherits = ["alpine"]
-	args = {"BASETAG" = "9.6-alpine"}
-	tags = [
-		"prodrigestivill/postgres-backup-local:9.6-alpine",
-		notequal("", BUILDREV) ? "prodrigestivill/postgres-backup-local:9.6-alpine-${BUILDREV}" : ""
 	]
 }
