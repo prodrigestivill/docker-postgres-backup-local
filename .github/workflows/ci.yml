@@ -68,6 +68,7 @@ jobs:
     if: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
     needs: [ test-script ]
     runs-on: ubuntu-latest
+    environment: docker.io
     steps:
       - uses: actions/checkout@v2
 
