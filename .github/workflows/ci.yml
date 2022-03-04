@@ -149,10 +149,12 @@ jobs:
 
       - name: Build images
         env:
-          BUILDREV: ${{ steps.vars.outputs.sha_short }}
+          REGISTRY_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/
+          BUILD_REVISION: ${{ steps.vars.outputs.sha_short }}
         run: docker buildx bake --pull
 
       - name: Push images
         env:
-          BUILDREV: ${{ steps.vars.outputs.sha_short }}
+          REGISTRY_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/
+          BUILD_REVISION: ${{ steps.vars.outputs.sha_short }}
         run: docker buildx bake --push
