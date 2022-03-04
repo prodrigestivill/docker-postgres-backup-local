@@ -3,7 +3,6 @@
 set -e
 
 DOCKER_BAKE_FILE=${1:-"docker-bake.hcl"}
-IMAGE_NAME=${IMAGE_NAME:-"postgres-backup-local"}
 
 GOCRONVER="v0.0.10"
 MAIN_TAG="14"
@@ -29,6 +28,10 @@ variable "REGISTRY_PREFIX" {
 	default = ""
 }
 
+variable "IMAGE_NAME" {
+	default = "postgres-backup-local"
+}
+
 variable "BUILD_REVISION" {
 	default = ""
 }
@@ -48,9 +51,9 @@ target "debian-latest" {
 	platforms = [$P]
 	args = {"BASETAG" = "$MAIN_TAG"}
 	tags = [
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:latest",
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:$MAIN_TAG",
-		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}$IMAGE_NAME:$MAIN_TAG-debian-\${BUILD_REVISION}" : ""
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:latest",
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:$MAIN_TAG",
+		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}\${IMAGE_NAME}:$MAIN_TAG-debian-\${BUILD_REVISION}" : ""
 	]
 }
 
@@ -59,9 +62,9 @@ target "alpine-latest" {
 	platforms = [$P]
 	args = {"BASETAG" = "$MAIN_TAG-alpine"}
 	tags = [
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:alpine",
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:$MAIN_TAG-alpine",
-		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}$IMAGE_NAME:$MAIN_TAG-alpine-\${BUILD_REVISION}" : ""
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:alpine",
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:$MAIN_TAG-alpine",
+		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}\${IMAGE_NAME}:$MAIN_TAG-alpine-\${BUILD_REVISION}" : ""
 	]
 }
 EOF
@@ -73,8 +76,8 @@ target "debian-$TAG" {
 	platforms = [$P]
 	args = {"BASETAG" = "$TAG"}
 	tags = [
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG",
-		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG-debian-\${BUILD_REVISION}" : ""
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG",
+		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG-debian-\${BUILD_REVISION}" : ""
 	]
 }
 
@@ -83,8 +86,8 @@ target "alpine-$TAG" {
 	platforms = [$P]
 	args = {"BASETAG" = "$TAG-alpine"}
 	tags = [
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG-alpine",
-		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG-alpine-\${BUILD_REVISION}" : ""
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG-alpine",
+		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG-alpine-\${BUILD_REVISION}" : ""
 	]
 }
 EOF
@@ -97,8 +100,8 @@ target "debian-$TAG" {
 	platforms = [$P2]
 	args = {"BASETAG" = "$TAG"}
 	tags = [
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG",
-		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG-debian-\${BUILD_REVISION}" : ""
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG",
+		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG-debian-\${BUILD_REVISION}" : ""
 	]
 }
 
@@ -107,8 +110,8 @@ target "alpine-$TAG" {
 	platforms = [$P]
 	args = {"BASETAG" = "$TAG-alpine"}
 	tags = [
-		"\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG-alpine",
-		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}$IMAGE_NAME:$TAG-alpine-\${BUILD_REVISION}" : ""
+		"\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG-alpine",
+		notequal("", BUILD_REVISION) ? "\${REGISTRY_PREFIX}\${IMAGE_NAME}:$TAG-alpine-\${BUILD_REVISION}" : ""
 	]
 }
 EOF

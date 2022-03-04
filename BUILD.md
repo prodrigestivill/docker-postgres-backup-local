@@ -20,30 +20,26 @@ docker buildx inspect --bootstrap
 
 ## Generate the images
 
-### Generate build configuration
-
-In order to modify the image name or any other configurable parameter run the `generate.sh` script.
-
-```sh
-IMAGE_NAME="postgres-backup-local" ./generate.sh config.hcl
-```
-
-### Build the images
-
 In order to only build the images locally run the following command:
 
 ```sh
-docker buildx bake --pull -f config.hcl
+docker buildx bake --pull
 ```
 
-In order to publish directly to the repository run this command instead:
+In order to build modifying the image name and the registry prefix run the following command:
 
 ```sh
-REGISTRY_PREFIX="dockerhub_username/" docker buildx bake --pull --push -f config.hcl
+REGISTRY_PREFIX="dockerhub_username/" IMAGE_NAME="postgres-backup-local" docker buildx bake --pull
+```
+
+In order to publish directly to the registry run this command instead:
+
+```sh
+REGISTRY_PREFIX="dockerhub_username/" docker buildx bake --pull --push
 ```
 
 Also, optionally, it can also generate build revision tags from last git commit:
 
 ```sh
-REGISTRY_PREFIX="dockerhub_username/" BUILD_REVISION=$(git rev-parse --short HEAD) docker buildx bake --pull --push -f config.hcl
+REGISTRY_PREFIX="dockerhub_username/" BUILD_REVISION=$(git rev-parse --short HEAD) docker buildx bake --pull --push
 ```

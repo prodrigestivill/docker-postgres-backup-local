@@ -6,6 +6,10 @@ variable "REGISTRY_PREFIX" {
 	default = ""
 }
 
+variable "IMAGE_NAME" {
+	default = "postgres-backup-local"
+}
+
 variable "BUILD_REVISION" {
 	default = ""
 }
@@ -25,9 +29,9 @@ target "debian-latest" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "14"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:latest",
-		"${REGISTRY_PREFIX}postgres-backup-local:14",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:14-debian-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:latest",
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:14",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:14-debian-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -36,9 +40,9 @@ target "alpine-latest" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "14-alpine"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:alpine",
-		"${REGISTRY_PREFIX}postgres-backup-local:14-alpine",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:14-alpine-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:alpine",
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:14-alpine",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:14-alpine-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -47,8 +51,8 @@ target "debian-13" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "13"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:13",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:13-debian-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:13",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:13-debian-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -57,8 +61,8 @@ target "alpine-13" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "13-alpine"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:13-alpine",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:13-alpine-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:13-alpine",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:13-alpine-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -67,8 +71,8 @@ target "debian-12" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "12"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:12",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:12-debian-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:12",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:12-debian-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -77,8 +81,8 @@ target "alpine-12" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "12-alpine"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:12-alpine",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:12-alpine-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:12-alpine",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:12-alpine-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -87,8 +91,8 @@ target "debian-11" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
 	args = {"BASETAG" = "11"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:11",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:11-debian-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:11",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:11-debian-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -97,8 +101,8 @@ target "alpine-11" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "11-alpine"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:11-alpine",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:11-alpine-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:11-alpine",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:11-alpine-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -107,8 +111,8 @@ target "debian-10" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
 	args = {"BASETAG" = "10"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:10",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:10-debian-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:10",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:10-debian-${BUILD_REVISION}" : ""
 	]
 }
 
@@ -117,7 +121,7 @@ target "alpine-10" {
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
 	args = {"BASETAG" = "10-alpine"}
 	tags = [
-		"${REGISTRY_PREFIX}postgres-backup-local:10-alpine",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}postgres-backup-local:10-alpine-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:10-alpine",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:10-alpine-${BUILD_REVISION}" : ""
 	]
 }
