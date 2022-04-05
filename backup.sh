@@ -108,7 +108,7 @@ for DB in ${POSTGRES_DBS}; do
   ln -svf "${MONTHY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
   #Clean old files
   echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
-  find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
+  find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
   find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime "+${KEEP_DAYS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
   find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime "+${KEEP_WEEKS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
   find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime "+${KEEP_MONTHS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
