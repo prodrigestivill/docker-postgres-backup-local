@@ -1,80 +1,139 @@
 #!/usr/bin/env bash
-set -Eeo pipefail
 
-if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
-  echo "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
-  exit 1
-fi
+# Environmental variables
+#POSTGRES_DB_FILE="**None**"
+#POSTGRES_USER_FILE="**None**"
+#POSTGRES_PASSWORD_FILE="**None**"
+#POSTGRES_PASSFILE_STORE="**None**"
+#BACKUP_DIR="/matrix/postgres-backup"
+#POSTGRES_USER=matrix
+#POSTGRES_PASSWORD=3wI9iPlxuMnv2xT3Ozk1rCYOOfF192GlK6rCcwkQD7KlMkTKgsjG9umPQQNAINJ9
+#POSTGRES_HOST=matrix-postgres
+#POSTGRES_DB=( synapse matrix_registration matrix_mautrix_telegram matrix_prometheus_postgres_exporter )
+#POSTGRES_EXTRA_OPTS="-Z9 --schema=public --blobs"
+#SCHEDULE=@daily
+#HEALTHCHECK_PORT=8080
+#POSTGRES_PORT=5432
 
-if [ "${POSTGRES_HOST}" = "**None**" ]; then
-  if [ -n "${POSTGRES_PORT_5432_TCP_ADDR}" ]; then
-    POSTGRES_HOST=${POSTGRES_PORT_5432_TCP_ADDR}
-    POSTGRES_PORT=${POSTGRES_PORT_5432_TCP_PORT}
-  else
-    echo "You need to set the POSTGRES_HOST environment variable."
-    exit 1
-  fi
-fi
+BACKUP_KEEP_DAYS="2"
+BACKUP_DELETE_DAYS=false
+BACKUP_KEEP_WEEKS="0"
+BACKUP_DELETE_WEEKS=false
+BACKUP_KEEP_MONTHS="0"
+BACKUP_DELETE_MONTHS=false
+BACKUP_MONTH_DAY="01"
+BACKUP_WEEK_DAY="Sunday"
 
-if [ "${POSTGRES_USER}" = "**None**" -a "${POSTGRES_USER_FILE}" = "**None**" ]; then
-  echo "You need to set the POSTGRES_USER or POSTGRES_USER_FILE environment variable."
-  exit 1
-fi
-
-if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
-  echo "You need to set the POSTGRES_PASSWORD or POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE environment variable or link to a container named POSTGRES."
-  exit 1
-fi
-
-#Process vars
-if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
-  POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
-elif [ -r "${POSTGRES_DB_FILE}" ]; then
-  POSTGRES_DBS=$(cat "${POSTGRES_DB_FILE}")
-else
-  echo "Missing POSTGRES_DB_FILE file."
-  exit 1
-fi
-if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
-  export PGUSER="${POSTGRES_USER}"
-elif [ -r "${POSTGRES_USER_FILE}" ]; then
-  export PGUSER=$(cat "${POSTGRES_USER_FILE}")
-else
-  echo "Missing POSTGRES_USER_FILE file."
-  exit 1
-fi
-if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
-  export PGPASSWORD="${POSTGRES_PASSWORD}"
-elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
-  export PGPASSWORD=$(cat "${POSTGRES_PASSWORD_FILE}")
-elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
-  export PGPASSFILE="${POSTGRES_PASSFILE_STORE}"
-else
-  echo "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
-  exit 1
-fi
+# Import variables from environment
 export PGHOST="${POSTGRES_HOST}"
 export PGPORT="${POSTGRES_PORT}"
 KEEP_MINS=${BACKUP_KEEP_MINS}
 KEEP_DAYS=${BACKUP_KEEP_DAYS}
-KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
-KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
+KEEP_WEEKS=`expr $((${BACKUP_KEEP_WEEKS} * 7))`
+KEEP_MONTHS=`expr $((${BACKUP_KEEP_MONTHS} * 31))`
+  
+setup () {
 
-#Initialize dirs
-mkdir -p "${BACKUP_DIR}/last/" "${BACKUP_DIR}/daily/" "${BACKUP_DIR}/weekly/" "${BACKUP_DIR}/monthly/"
+  set -Eeo pipefail
 
-#Loop all databases
-for DB in ${POSTGRES_DBS}; do
-  #Initialize filename vers
-  LAST_FILENAME="${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
-  DAILY_FILENAME="${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
-  WEEKLY_FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
-  MONTHY_FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
-  FILE="${BACKUP_DIR}/last/${LAST_FILENAME}"
-  DFILE="${BACKUP_DIR}/daily/${DAILY_FILENAME}"
-  WFILE="${BACKUP_DIR}/weekly/${WEEKLY_FILENAME}"
-  MFILE="${BACKUP_DIR}/monthly/${MONTHY_FILENAME}"
-  #Create dump
+  if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
+    echo "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
+    exit 1
+  fi
+
+  if [ "${POSTGRES_HOST}" = "**None**" ]; then
+    if [ -n "${POSTGRES_PORT_5432_TCP_ADDR}" ]; then
+      POSTGRES_HOST=${POSTGRES_PORT_5432_TCP_ADDR}
+      POSTGRES_PORT=${POSTGRES_PORT_5432_TCP_PORT}
+    else
+      echo "You need to set the POSTGRES_HOST environment variable."
+      exit 1
+    fi
+  fi
+
+  if [ "${POSTGRES_USER}" = "**None**" -a "${POSTGRES_USER_FILE}" = "**None**" ]; then
+    echo "You need to set the POSTGRES_USER or POSTGRES_USER_FILE environment variable."
+    exit 1
+  fi
+
+  if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
+    echo "You need to set the POSTGRES_PASSWORD or POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE environment variable or link to a container named POSTGRES."
+    exit 1
+  fi
+
+  #Process vars
+  if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
+    POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
+  elif [ -r "${POSTGRES_DB_FILE}" ]; then
+    POSTGRES_DBS=$(cat "${POSTGRES_DB_FILE}")
+  else
+    echo "Missing POSTGRES_DB_FILE file."
+    exit 1
+  fi
+  if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
+    export PGUSER="${POSTGRES_USER}"
+  elif [ -r "${POSTGRES_USER_FILE}" ]; then
+    export PGUSER=$(cat "${POSTGRES_USER_FILE}")
+  else
+    echo "Missing POSTGRES_USER_FILE file."
+    exit 1
+  fi
+  if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
+    export PGPASSWORD="${POSTGRES_PASSWORD}"
+  elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
+    export PGPASSWORD=$(cat "${POSTGRES_PASSWORD_FILE}")
+  elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
+    export PGPASSFILE="${POSTGRES_PASSFILE_STORE}"
+  else
+    echo "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
+    exit 1
+  fi
+
+  FREQUENCY=( daily weekly monthly )
+
+  for f in ${FREQUENCY[@]}
+  do
+  
+    mkdir -p "${BACKUP_DIR}/${f}/"
+
+  done
+
+  MONTH_DAY=`date +%d`
+  WEEK_DAY=`date +%A`
+
+}
+
+#Create Backups
+create_backups () {
+
+  for DB in ${POSTGRES_DBS}
+  do
+
+    FILE="${BACKUP_DIR}/daily/${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
+
+    create_dump
+
+    if [ "${BACKUP_MONTH_DAY}" = "${MONTH_DAY}" ]
+    then
+
+      create_hardlinks "${FILE}" "monthly"
+
+    elif [ "${BACKUP_WEEK_DAY}" = "${WEEK_DAY}" ]
+    then
+
+      create_hardlinks "${FILE}" "weekly"
+
+    fi
+
+    echo "SQL backup created successfully"
+
+  done
+
+}
+
+# Create dump of postgres database
+create_dump () {
+
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
@@ -82,36 +141,137 @@ for DB in ${POSTGRES_DBS}; do
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
   fi
+
+}
+
+# Create hardlinks from daily backup to monthly and weekly backups
+create_hardlinks () {
+  
+  SRC=$1
+  INCREMENT=$2
+
+  if [ "${INCREMENT}" = "weekly" ]
+  then
+
+    echo "Creating Weekly Backup of ${DB} database from ${POSTGRES_HOST}..."
+    FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
+
+  elif [ "${INCREMENT}" = "monthly"]
+  then
+
+    echo "Creating Monthly Backup of ${DB} database from ${POSTGRES_HOST}..."
+    FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
+
+  fi
+
+  DEST="${BACKUP_DIR}/${INCREMENT}/${FILENAME}"
+
   #Copy (hardlink) for each entry
-  if [ -d "${FILE}" ]; then
-    DFILENEW="${DFILE}-new"
-    WFILENEW="${WFILE}-new"
-    MFILENEW="${MFILE}-new"
-    rm -rf "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
-    mkdir "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
-    ln -f "${FILE}/"* "${DFILENEW}/"
-    ln -f "${FILE}/"* "${WFILENEW}/"
-    ln -f "${FILE}/"* "${MFILENEW}/"
-    rm -rf "${DFILE}" "${WFILE}" "${MFILE}"
-    mv -v "${DFILENEW}" "${DFILE}"
-    mv -v "${WFILENEW}" "${WFILE}"
-    mv -v "${MFILENEW}" "${MFILE}"
+  if [ -d "${SRC}" ]
+  then
+    ln -f "${SRC}/"* "${DEST}/"
   else
-    ln -vf "${FILE}" "${DFILE}"
-    ln -vf "${FILE}" "${WFILE}"
-    ln -vf "${FILE}" "${MFILE}"
+    ln -vf "${SRC}" "${DEST}"
   fi
   # Update latest symlinks
-  ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
-  ln -svf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
-  ln -svf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
-  ln -svf "${MONTHY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
-  #Clean old files
-  echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
-  find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
-  find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime "+${KEEP_DAYS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
-  find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime "+${KEEP_WEEKS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
-  find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime "+${KEEP_MONTHS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rf '{}' ';'
-done
+  ln -svf "${DEST}" "${BACKUP_DIR}/${INCREMENT}/${DB}-latest"
 
-echo "SQL backup created successfully"
+}
+
+#Clean up old backups
+cleanup_backups () {
+  
+  for folder in "${FREQUENCY[@]}"
+  do
+    if [ $folder == "weekly" ]
+    then
+	    KEEP=$KEEP_WEEKS
+	    DELETE=$BACKUP_DELETE_WEEKS
+    elif [ $folder == 'monthly' ]
+    then
+      KEEP=$KEEP_MONTHS
+	    DELETE=$BACKUP_DELETE_MONTHS
+    elif [ $folder == 'daily' ]
+    then
+      KEEP=$KEEP_DAYS
+	    DELETE=$BACKUP_DELETE_DAYS
+    fi
+
+    for DB in ${POSTGRES_DBS}
+    do
+
+      #Clean old files
+      echo "Cleaning older files in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
+
+      local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
+
+      if [ $KEEP -gt 0 ]
+      then
+      
+        local files=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -mtime "+$((${KEEP}-1))" -name "${DB}-*"` )
+
+      fi
+
+  	  if [ $((${#all[@]}-${#files[@]})) -lt ${KEEP} ]
+      then
+        
+        echo "Only ${#all[@]} Backups exist for ${DB} and you want to keep $KEEP."
+        echo "If you have just started taking backups you may ignore this"
+        echo "Otherwise you may want to investigate why backups are not being taken"
+
+      elif $DELETE
+      then
+        for file in "${files[@]}"
+        do
+
+          echo "Deleting $file"
+  		    rm $file
+
+        done
+      else
+        for file in "${files[@]}"
+        do
+
+          echo "Dry Run: Delete $file"
+
+        done
+      fi
+
+    done
+
+  done
+}
+
+listCommands () {
+
+  echo "--create-backup -b  Create Daily, Weekly and Monthly backups"
+  echo "--cleanup -c        Cleanup old backups"
+  echo "--help -h           List commands"
+
+}
+
+case $1 in
+
+  "--create-backup" | "-b")
+
+    setup
+    create_backups
+    ;;
+
+  "--cleanup" | "-c")
+
+    setup
+    cleanup_backups
+    ;;
+
+  "--help" | "-h")
+
+    listCommands
+    ;;
+
+  *)
+
+    echo "No command found."
+    listCommands
+
+esac
