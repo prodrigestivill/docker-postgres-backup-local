@@ -46,9 +46,14 @@ services:
          #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
             - POSTGRES_EXTRA_OPTS=-Z6 --schema=public --blobs
             - SCHEDULE=@daily
-            - BACKUP_KEEP_DAYS=7
-            - BACKUP_KEEP_WEEKS=4
-            - BACKUP_KEEP_MONTHS=6
+            - BACKUP_KEEP_DAYS="2"
+            - BACKUP_DELETE_DAYS=false
+            - BACKUP_KEEP_WEEKS="0"
+            - BACKUP_DELETE_WEEKS=false
+            - BACKUP_KEEP_MONTHS="0"
+            - BACKUP_DELETE_MONTHS=false
+            - BACKUP_MONTH_DAY="01"
+            - BACKUP_WEEK_DAY="Sunday"
             - HEALTHCHECK_PORT=8080
 ```
 
@@ -66,37 +71,41 @@ mkdir -p /var/opt/pgbackups && chown -R 70:70 /var/opt/pgbackups
 
 Most variables are the same as in the [official postgres image](https://hub.docker.com/_/postgres/).
 
-| env variable | description |
-|--|--|
-| BACKUP_DIR | Directory to save the backup at. Defaults to `/backups`. |
-| BACKUP_SUFFIX | Filename suffix to save the backup. Defaults to `.sql.gz`. |
-| BACKUP_KEEP_DAYS | Number of daily backups to keep before removal. Defaults to `7`. |
-| BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
-| BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
-| BACKUP_KEEP_MINS | Number of minutes for `last` folder backups to keep before removal. Defaults to `1440`. |
-| HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
-| POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
-| POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |
-| POSTGRES_EXTRA_OPTS | Additional [options](https://www.postgresql.org/docs/12/app-pgdump.html#PG-DUMP-OPTIONS) for `pg_dump` (or `pg_dumpall` [options](https://www.postgresql.org/docs/12/app-pg-dumpall.html#id-1.9.4.13.6) if POSTGRES_CLUSTER is set). Defaults to `-Z6`. |
-| POSTGRES_CLUSTER | Set to `TRUE` in order to use `pg_dumpall` instead. Also set POSTGRES_EXTRA_OPTS to any value or empty since the default value is not compatible with `pg_dumpall`. |
-| POSTGRES_HOST | Postgres connection parameter; postgres host to connect to. Required. |
-| POSTGRES_PASSWORD | Postgres connection parameter; postgres password to connect with. Required. |
-| POSTGRES_PASSWORD_FILE | Alternative to POSTGRES_PASSWORD, for usage with docker secrets. |
-| POSTGRES_PASSFILE_STORE | Alternative to POSTGRES_PASSWORD in [passfile format](https://www.postgresql.org/docs/12/libpq-pgpass.html#LIBPQ-PGPASS), for usage with postgres clusters. |
-| POSTGRES_PORT | Postgres connection parameter; postgres port to connect to. Defaults to `5432`. |
-| POSTGRES_USER | Postgres connection parameter; postgres user to connect with. Required. |
-| POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |
-| SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
-| TZ | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris"). |
+| env variable            | description                                                                                                                                                                                                                                             |
+| ----------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| BACKUP_DIR              | Directory to save the backup at. Defaults to `/backups`.                                                                                                                                                                                                |
+| BACKUP_SUFFIX           | Filename suffix to save the backup. Defaults to `.sql.gz`.                                                                                                                                                                                              |
+| BACKUP_KEEP_DAYS        | Number of daily backups to keep before removal. Defaults to `7`.                                                                                                                                                                                        |
+| BACKUP_DELETE_DAYS      | Whether the daily backups are deleted. Defaults to `true`.                                                                                                                                                                                              |
+| BACKUP_KEEP_WEEKS       | Number of weekly backups to keep before removal. Defaults to `4`.                                                                                                                                                                                       |
+| BACKUP_DELETE_WEEKS     | Whether the weekly backups are deleted. Defaults to `true`.                                                                                                                                                                                             |
+| BACKUP_KEEP_MONTHS      | Number of monthly backups to keep before removal. Defaults to `6`.                                                                                                                                                                                      |
+| BACKUP_DELETE_MONTHS    | Whether the monthly backups are deleted. Defaults to `true`.                                                                                                                                                                                            |
+| BACKUP_MONTH_DAY        | What day of the month the monthly backup will be taken. Defaults to `01`.                                                                                                                                                                               |
+| BACKUP_WEEK_DAY         | What day of the week the weekly backup will be taken. Defaults to `Sunday`.                                                                                                                                                                             |
+| HEALTHCHECK_PORT        | Port listening for cron-schedule health check. Defaults to `8080`.                                                                                                                                                                                      |
+| POSTGRES_DB             | Comma or space separated list of postgres databases to backup. Required.                                                                                                                                                                                |
+| POSTGRES_DB_FILE        | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets.                                                                                                                                                              |
+| POSTGRES_EXTRA_OPTS     | Additional [options](https://www.postgresql.org/docs/12/app-pgdump.html#PG-DUMP-OPTIONS) for `pg_dump` (or `pg_dumpall` [options](https://www.postgresql.org/docs/12/app-pg-dumpall.html#id-1.9.4.13.6) if POSTGRES_CLUSTER is set). Defaults to `-Z6`. |
+| POSTGRES_CLUSTER        | Set to `TRUE` in order to use `pg_dumpall` instead. Also set POSTGRES_EXTRA_OPTS to any value or empty since the default value is not compatible with `pg_dumpall`.                                                                                     |
+| POSTGRES_HOST           | Postgres connection parameter; postgres host to connect to. Required.                                                                                                                                                                                   |
+| POSTGRES_PASSWORD       | Postgres connection parameter; postgres password to connect with. Required.                                                                                                                                                                             |
+| POSTGRES_PASSWORD_FILE  | Alternative to POSTGRES_PASSWORD, for usage with docker secrets.                                                                                                                                                                                        |
+| POSTGRES_PASSFILE_STORE | Alternative to POSTGRES_PASSWORD in [passfile format](https://www.postgresql.org/docs/12/libpq-pgpass.html#LIBPQ-PGPASS), for usage with postgres clusters.                                                                                             |
+| POSTGRES_PORT           | Postgres connection parameter; postgres port to connect to. Defaults to `5432`.                                                                                                                                                                         |
+| POSTGRES_USER           | Postgres connection parameter; postgres user to connect with. Required.                                                                                                                                                                                 |
+| POSTGRES_USER_FILE      | Alternative to POSTGRES_USER, for usage with docker secrets.                                                                                                                                                                                            |
+| SCHEDULE                | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`.                                                                                               |
+| TZ                      | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris").                                                                               |
 
 #### Special Environment Variables
 
 This variables are not intended to be used for normal deployment operations:
 
-| env variable | description |
-|--|--|
+| env variable                | description                                        |
+| --------------------------- | -------------------------------------------------- |
 | POSTGRES_PORT_5432_TCP_ADDR | Sets the POSTGRES_HOST when the latter is not set. |
-| POSTGRES_PORT_5432_TCP_PORT | Sets POSTGRES_PORT when POSTGRES_HOST is not set. |
+| POSTGRES_PORT_5432_TCP_PORT | Sets POSTGRES_PORT when POSTGRES_HOST is not set.  |
 
 ### Manual Backups
 
