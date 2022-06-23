@@ -23,10 +23,14 @@ ENV POSTGRES_DB="**None**" \
     SCHEDULE="@daily" \
     BACKUP_DIR="/backups" \
     BACKUP_SUFFIX=".sql.gz" \
-    BACKUP_KEEP_DAYS=7 \
-    BACKUP_KEEP_WEEKS=4 \
-    BACKUP_KEEP_MONTHS=6 \
-    BACKUP_KEEP_MINS=1440 \
+    BACKUP_KEEP_DAYS="7" \
+    BACKUP_DELETE_DAYS=true \
+    BACKUP_KEEP_WEEKS="4" \
+    BACKUP_DELETE_WEEKS=true \
+    BACKUP_KEEP_MONTHS="6" \
+    BACKUP_DELETE_MONTHS=true \
+    BACKUP_MONTH_DAY="01" \
+    BACKUP_WEEK_DAY="Sunday" \
     HEALTHCHECK_PORT=8080
 
 COPY backup.sh /backup.sh
