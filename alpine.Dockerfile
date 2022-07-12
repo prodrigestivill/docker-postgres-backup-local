@@ -21,7 +21,7 @@ ENV POSTGRES_DB="**None**" \
     POSTGRES_EXTRA_OPTS="-Z6" \
     POSTGRES_CLUSTER="FALSE" \
     BACKUP_SCHEDULE="@daily" \
-    CLEANUP_SCHEDULE="0 0 1 * * *" \
+    CLEANUP_SCHEDULE="0 0 3 * * *" \
     BACKUP_DIR="/backups" \
     BACKUP_SUFFIX=".sql.gz" \
     BACKUP_KEEP_DAYS="7" \
@@ -39,8 +39,7 @@ COPY backup.sh /backup.sh
 VOLUME /backups
 
 ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["exec /usr/local/bin/go-cron -s \"$BACKUP_SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh -b"]
-CMD ["exec /usr/local/bin/go-cron -s \"$CLEANUP_SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh -c"]
+CMD ["exec /usr/local/bin/go-cron -s \"$BACKUP_SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh"]
 
 HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f "http://localhost:$HEALTHCHECK_PORT/" || exit 1
