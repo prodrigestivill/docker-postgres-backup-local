@@ -1,29 +1,5 @@
 #!/usr/bin/env bash
 
-# Environmental variables
-#POSTGRES_DB_FILE="**None**"
-#POSTGRES_USER_FILE="**None**"
-#POSTGRES_PASSWORD_FILE="**None**"
-#POSTGRES_PASSFILE_STORE="**None**"
-#BACKUP_DIR="/matrix/postgres-backup"
-#POSTGRES_USER=matrix
-#POSTGRES_PASSWORD=3wI9iPlxuMnv2xT3Ozk1rCYOOfF192GlK6rCcwkQD7KlMkTKgsjG9umPQQNAINJ9
-#POSTGRES_HOST=matrix-postgres
-#POSTGRES_DB=( synapse matrix_registration matrix_mautrix_telegram matrix_prometheus_postgres_exporter )
-#POSTGRES_EXTRA_OPTS="-Z9 --schema=public --blobs"
-#SCHEDULE=@daily
-#HEALTHCHECK_PORT=8080
-#POSTGRES_PORT=5432
-
-BACKUP_KEEP_DAYS="2"
-BACKUP_DELETE_DAYS=false
-BACKUP_KEEP_WEEKS="0"
-BACKUP_DELETE_WEEKS=false
-BACKUP_KEEP_MONTHS="0"
-BACKUP_DELETE_MONTHS=false
-BACKUP_MONTH_DAY="01"
-BACKUP_WEEK_DAY="Sunday"
-
 # Import variables from environment
 export PGHOST="${POSTGRES_HOST}"
 export PGPORT="${POSTGRES_PORT}"
@@ -201,18 +177,28 @@ cleanup_backups () {
     do
 
       #Clean old files
-      echo "Cleaning older files in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
-
       local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
+      local files=()
 
       if [ $KEEP -gt 0 ]
       then
       
+        echo "Cleaning older files in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
         local files=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -mtime "+$((${KEEP}-1))" -name "${DB}-*"` )
+        local files=( `printf "%s\n" "${files[@]}" | sort -t/ -k3` )
+
+        if [ $((${#all[@]}-${#files[@]})) -lt ${KEEP} ]
+        then
+
+          local number=$((${#all[@]}-${#files[@]}))
+
+          local files=("${files[@]:0:$number}")
+
+        fi
 
       fi
 
-  	  if [ $((${#all[@]}-${#files[@]})) -lt ${KEEP} ]
+  	  if [ $((${#all[@]})) -lt ${KEEP} ]
       then
         
         echo "Only ${#all[@]} Backups exist for ${DB} and you want to keep $KEEP."
@@ -271,7 +257,8 @@ case $1 in
 
   *)
 
-    echo "No command found."
-    listCommands
+    setup
+    create_backups
+    cleanup_backups
 
 esac
