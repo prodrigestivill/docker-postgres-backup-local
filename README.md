@@ -88,6 +88,8 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |
 | SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
 | TZ | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris"). |
+| WEBHOOK_EXTRA_URL | Extra arguments for the webhook. |
+| WEBHOOK_URL | URL to be called after a successful backup. |
 
 #### Special Environment Variables
 
@@ -135,3 +137,4 @@ Replace `$BACKUPFILE`, `$VERSION`, `$HOSTNAME`, `$PORT`, `$USERNAME` and `$DBNAM
 ```sh
 docker run --rm --tty --interactive -v $BACKUPFILE:/tmp/backupfile.sql.gz postgres:$VERSION /bin/sh -c "zcat /tmp/backupfile.sql.gz | psql --host=$HOSTNAME --port=$PORT --username=$USERNAME --dbname=$DBNAME -W"
 ```
+

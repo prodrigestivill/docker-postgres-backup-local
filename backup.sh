@@ -75,12 +75,15 @@ for DB in ${POSTGRES_DBS}; do
   WFILE="${BACKUP_DIR}/weekly/${WEEKLY_FILENAME}"
   MFILE="${BACKUP_DIR}/monthly/${MONTHY_FILENAME}"
   #Create dump
+  WEBHOOK=true
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
+    if [ $? - ne 0 ]; then WEBHOOK=false; fi
   else
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
+    if [ $? - ne 0 ]; then WEBHOOK=false; fi
   fi
   #Copy (hardlink) for each entry
   if [ -d "${FILE}" ]; then
@@ -115,3 +118,13 @@ for DB in ${POSTGRES_DBS}; do
 done
 
 echo "SQL backup created successfully"
+
+if [ "${WEBHOOK_URL}" != "**None**" -a ${WEBHOOK} ]; then
+  echo "Execute post-backup webhook call to ${WEBHOOK_URL}"
+  curl --request POST \
+    --url ${WEBHOOK_URL} \
+    --max-time 10 \
+    --retry 5 \
+    ${WEBHOOK_EXTRA_ARGS}
+  exit 1
+fi
