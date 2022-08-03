@@ -88,7 +88,7 @@ target "alpine-12" {
 
 target "debian-11" {
 	inherits = ["debian"]
-	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
 	args = {"BASETAG" = "11"}
 	tags = [
 		"${REGISTRY_PREFIX}${IMAGE_NAME}:11",
@@ -108,7 +108,7 @@ target "alpine-11" {
 
 target "debian-10" {
 	inherits = ["debian"]
-	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
 	args = {"BASETAG" = "10"}
 	tags = [
 		"${REGISTRY_PREFIX}${IMAGE_NAME}:10",
