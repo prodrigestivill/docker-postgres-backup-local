@@ -161,16 +161,16 @@ cleanup_backups () {
   do
     if [ $folder == "weekly" ]
     then
-	    KEEP=$KEEP_WEEKS
-	    DELETE=$BACKUP_DELETE_WEEKS
+      KEEP=$BACKUP_KEEP_WEEKS
+      DELETE=$BACKUP_DELETE_WEEKS
     elif [ $folder == 'monthly' ]
     then
-      KEEP=$KEEP_MONTHS
-	    DELETE=$BACKUP_DELETE_MONTHS
+      KEEP=$BACKUP_KEEP_MONTHS
+      DELETE=$BACKUP_DELETE_MONTHS
     elif [ $folder == 'daily' ]
     then
-      KEEP=$KEEP_DAYS
-	    DELETE=$BACKUP_DELETE_DAYS
+      KEEP=$BACKUP_KEEP_DAYS
+      DELETE=$BACKUP_DELETE_DAYS
     fi
 
     for DB in ${POSTGRES_DBS}
