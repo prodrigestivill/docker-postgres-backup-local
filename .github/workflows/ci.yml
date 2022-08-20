@@ -34,6 +34,19 @@ jobs:
           POSTGRES_PORT: 5432
           POSTGRES_EXTRA_OPTS: "-Z0"
           BACKUP_DIR: ".data"
+          # Defaults
+          POSTGRES_DB_FILE: "**None**"
+          POSTGRES_USER_FILE: "**None**"
+          POSTGRES_PASSWORD_FILE: "**None**"
+          POSTGRES_PASSFILE_STORE: "**None**"
+          POSTGRES_CLUSTER: "FALSE"
+          BACKUP_SUFFIX: ".sql.gz"
+          BACKUP_KEEP_DAYS: 7
+          BACKUP_KEEP_WEEKS: 4
+          BACKUP_KEEP_MONTHS: 6
+          BACKUP_KEEP_MINS: 1440
+          WEBHOOK_URL: "**None**"
+          WEBHOOK_EXTRA_ARGS: ""
         run: |
           echo "Test backup script for pg_dump..."
           rm -fR "$BACKUP_DIR"
@@ -51,6 +64,18 @@ jobs:
           POSTGRES_EXTRA_OPTS: "-Z0 -Fd"
           BACKUP_SUFFIX: ""
           BACKUP_DIR: ".data"
+          # Defaults
+          POSTGRES_DB_FILE: "**None**"
+          POSTGRES_USER_FILE: "**None**"
+          POSTGRES_PASSWORD_FILE: "**None**"
+          POSTGRES_PASSFILE_STORE: "**None**"
+          POSTGRES_CLUSTER: "FALSE"
+          BACKUP_KEEP_DAYS: 7
+          BACKUP_KEEP_WEEKS: 4
+          BACKUP_KEEP_MONTHS: 6
+          BACKUP_KEEP_MINS: 1440
+          WEBHOOK_URL: "**None**"
+          WEBHOOK_EXTRA_ARGS: ""
         run: |
           echo "Test backup script for pg_dump with directories..."
           rm -fR "$BACKUP_DIR"
@@ -68,6 +93,18 @@ jobs:
           POSTGRES_PORT: 5432
           POSTGRES_EXTRA_OPTS: ""
           BACKUP_DIR: ".data"
+          # Defaults
+          POSTGRES_DB_FILE: "**None**"
+          POSTGRES_USER_FILE: "**None**"
+          POSTGRES_PASSWORD_FILE: "**None**"
+          POSTGRES_PASSFILE_STORE: "**None**"
+          BACKUP_SUFFIX: ".sql.gz"
+          BACKUP_KEEP_DAYS: 7
+          BACKUP_KEEP_WEEKS: 4
+          BACKUP_KEEP_MONTHS: 6
+          BACKUP_KEEP_MINS: 1440
+          WEBHOOK_URL: "**None**"
+          WEBHOOK_EXTRA_ARGS: ""
         run: |
           echo "Test backup script for pg_dumpall..."
           rm -fR "$BACKUP_DIR"
