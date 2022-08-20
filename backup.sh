@@ -115,3 +115,13 @@ for DB in ${POSTGRES_DBS}; do
 done
 
 echo "SQL backup created successfully"
+
+if [ "${WEBHOOK_URL}" != "**None**" ]; then
+  echo "Execute post-backup webhook call to ${WEBHOOK_URL}"
+  curl --request POST \
+    --url "${WEBHOOK_URL}" \
+    --max-time 10 \
+    --retry 5 \
+    ${WEBHOOK_EXTRA_ARGS}
+  exit 1
+fi
