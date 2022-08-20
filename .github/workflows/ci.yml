@@ -45,6 +45,8 @@ jobs:
           BACKUP_KEEP_WEEKS: 4
           BACKUP_KEEP_MONTHS: 6
           BACKUP_KEEP_MINS: 1440
+          WEBHOOK_URL: "**None**"
+          WEBHOOK_EXTRA_ARGS: ""
         run: |
           echo "Test backup script for pg_dump..."
           rm -fR "$BACKUP_DIR"
@@ -72,6 +74,8 @@ jobs:
           BACKUP_KEEP_WEEKS: 4
           BACKUP_KEEP_MONTHS: 6
           BACKUP_KEEP_MINS: 1440
+          WEBHOOK_URL: "**None**"
+          WEBHOOK_EXTRA_ARGS: ""
         run: |
           echo "Test backup script for pg_dump with directories..."
           rm -fR "$BACKUP_DIR"
@@ -99,6 +103,8 @@ jobs:
           BACKUP_KEEP_WEEKS: 4
           BACKUP_KEEP_MONTHS: 6
           BACKUP_KEEP_MINS: 1440
+          WEBHOOK_URL: "**None**"
+          WEBHOOK_EXTRA_ARGS: ""
         run: |
           echo "Test backup script for pg_dumpall..."
           rm -fR "$BACKUP_DIR"
