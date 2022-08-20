@@ -90,8 +90,8 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |
 | SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
 | TZ | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris"). |
-| WEBHOOK_EXTRA_URL | Extra arguments for the webhook. |
-| WEBHOOK_URL | URL to be called after a successful backup. |
+| WEBHOOK_URL | URL to be called after an error or after a successful backup (POST with a JSON payload, check `hooks/00-webhook.sh` file for more info). Default disabled. |
+| WEBHOOK_EXTRA_ARGS | Extra arguments for the `curl` execution in the webhook (check `hooks/00-webhook.sh` file for more info). |
 
 #### Special Environment Variables
 
@@ -132,6 +132,13 @@ To do so it is using the following independent variables:
 * BACKUP_KEEP_WEEKS: will remove files from the `weekly` folder that are older than its value in weeks after a new successfull backup (remember that it starts counting from the end of each week not the beggining).
 * BACKUP_KEEP_MONTHS: will remove files from the `monthly` folder that are older than its value in months (of 31 days) after a new successfull backup (remember that it starts counting from the end of each month not the beggining).
 
+### Hooks
+
+The folder `hooks` inside the container can contain hooks/scripts to be run in differrent cases getting the exact situation as a first argument (`error`, `pre-backup` or `post-backup`).
+
+Just create an script in that folder with execution permission so that [run-parts](https://manpages.debian.org/stable/debianutils/run-parts.8.en.html) can execute it on each state change.
+
+Please, as an example take a look in the script already present there that implements the `WEBHOOK_URL` functionality.
 
 ### Manual Backups
 

@@ -1,6 +1,14 @@
 #!/usr/bin/env bash
 set -Eeo pipefail
 
+HOOKS_DIR="/hooks"
+if [ -d "${HOOKS_DIR}" ]; then
+  on_error(){
+    run-parts -a "error" "${HOOKS_DIR}"
+  }
+  trap 'on_error' ERR
+fi
+
 if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
   echo "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
   exit 1
@@ -59,6 +67,11 @@ KEEP_MINS=${BACKUP_KEEP_MINS}
 KEEP_DAYS=${BACKUP_KEEP_DAYS}
 KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
+
+# Pre-backup hook
+if [ -d "${HOOKS_DIR}" ]; then
+  run-parts -a "pre-backup" --exit-on-error "${HOOKS_DIR}"
+fi
 
 #Initialize dirs
 mkdir -p "${BACKUP_DIR}/last/" "${BACKUP_DIR}/daily/" "${BACKUP_DIR}/weekly/" "${BACKUP_DIR}/monthly/"
@@ -126,12 +139,7 @@ done
 
 echo "SQL backup created successfully"
 
-if [ "${WEBHOOK_URL}" != "**None**" ]; then
-  echo "Execute post-backup webhook call to ${WEBHOOK_URL}"
-  curl --request POST \
-    --url "${WEBHOOK_URL}" \
-    --max-time 10 \
-    --retry 5 \
-    ${WEBHOOK_EXTRA_ARGS}
-  exit 1
+# Post-backup hook
+if [ -d "${HOOKS_DIR}" ]; then
+  run-parts -a "post-backup" --reverse --exit-on-error "${HOOKS_DIR}"
 fi

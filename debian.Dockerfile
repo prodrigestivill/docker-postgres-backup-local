@@ -46,7 +46,7 @@ ENV POSTGRES_DB="**None**" \
     WEBHOOK_URL="**None**" \
     WEBHOOK_EXTRA_ARGS=""
 
-COPY backup.sh /backup.sh
+COPY backup.sh hooks /
 
 VOLUME /backups
 
