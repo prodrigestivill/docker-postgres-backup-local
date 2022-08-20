@@ -91,8 +91,8 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | POSTGRES_USER_FILE | Alternative to POSTGRES_USER, for usage with docker secrets. |
 | SCHEDULE | [Cron-schedule](http://godoc.org/github.com/robfig/cron#hdr-Predefined_schedules) specifying the interval between postgres backups. Defaults to `@daily`. |
 | TZ | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris"). |
-| WEBHOOK_URL | URL to be called after an error or after a successful backup (POST with a JSON payload, check `hooks/00-webhook.sh` file for more info). Default disabled. |
-| WEBHOOK_EXTRA_ARGS | Extra arguments for the `curl` execution in the webhook (check `hooks/00-webhook.sh` file for more info). |
+| WEBHOOK_URL | URL to be called after an error or after a successful backup (POST with a JSON payload, check `hooks/00-webhook` file for more info). Default disabled. |
+| WEBHOOK_EXTRA_ARGS | Extra arguments for the `curl` execution in the webhook (check `hooks/00-webhook` file for more info). |
 
 #### Special Environment Variables
 
