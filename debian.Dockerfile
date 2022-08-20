@@ -24,27 +24,7 @@ RUN set -x \
 	&& gzip -vnd /usr/local/bin/go-cron.gz && chmod a+x /usr/local/bin/go-cron \
 	&& apt-get purge -y --auto-remove ca-certificates && apt-get clean
 
-ENV POSTGRES_DB="**None**" \
-    POSTGRES_DB_FILE="**None**" \
-    POSTGRES_HOST="**None**" \
-    POSTGRES_PORT=5432 \
-    POSTGRES_USER="**None**" \
-    POSTGRES_USER_FILE="**None**" \
-    POSTGRES_PASSWORD="**None**" \
-    POSTGRES_PASSWORD_FILE="**None**" \
-    POSTGRES_PASSFILE_STORE="**None**" \
-    POSTGRES_EXTRA_OPTS="-Z6" \
-    POSTGRES_CLUSTER="FALSE" \
-    SCHEDULE="@daily" \
-    BACKUP_DIR="/backups" \
-    BACKUP_SUFFIX=".sql.gz" \
-    BACKUP_KEEP_DAYS=7 \
-    BACKUP_KEEP_WEEKS=4 \
-    BACKUP_KEEP_MONTHS=6 \
-    BACKUP_KEEP_MINS=1440 \
-    HEALTHCHECK_PORT=8080 \
-    WEBHOOK_URL="**None**" \
-    WEBHOOK_EXTRA_ARGS=""
+ENV SCHEDULE="@daily" HEALTHCHECK_PORT=8080
 
 COPY backup.sh /backup.sh
 
