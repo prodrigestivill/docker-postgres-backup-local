@@ -3,8 +3,8 @@
 set -e
 
 GOCRONVER="v0.0.10"
-MAIN_TAG="14"
-TAGS_EXTRA="13 12"
+MAIN_TAG="15"
+TAGS_EXTRA="14 13 12"
 PLATFORMS="linux/amd64 linux/arm64 linux/arm/v7 linux/s390x linux/ppc64le"
 TAGS_EXTRA_2="11 10"
 PLATFORMS_DEBIAN_2="linux/amd64 linux/arm64 linux/arm/v7"
