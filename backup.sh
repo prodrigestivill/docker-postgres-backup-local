@@ -117,7 +117,7 @@ create_backups () {
 
     fi
 
-    einfo "SQL backup created successfully"
+    echo "SQL backup created successfully"
 
   done
 
@@ -132,10 +132,10 @@ create_backups () {
 create_dump () {
 
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
-    einfo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
+    echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
   else
-    einfo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
+    echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
   fi
 
