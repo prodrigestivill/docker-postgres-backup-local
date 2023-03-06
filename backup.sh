@@ -104,18 +104,8 @@ create_backups () {
     ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
 
     create_hardlinks "${FILE}" "daily"
-
-    if [ "${BACKUP_MONTH_DAY}" = "${MONTH_DAY}" ]
-    then
-
-      create_hardlinks "${FILE}" "monthly"
-
-    elif [ "${BACKUP_WEEK_DAY}" = "${WEEK_DAY}" ]
-    then
-
-      create_hardlinks "${FILE}" "weekly"
-
-    fi
+    create_hardlinks "${FILE}" "monthly"
+    create_hardlinks "${FILE}" "weekly"
 
     echo "SQL backup created successfully"
 
