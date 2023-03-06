@@ -208,12 +208,19 @@ cleanup_backups () {
     do
 
       #Clean old files
-      local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
+      local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*" | sort -t/ -k3` )
       local files=()
       number=$((${#all[@]}-$KEEP))
       echo "Number of Backups to be deleted: $number"
 
-      if [ $number -gt 0 ]
+      if [ $number -le 0 ]
+      then
+        
+        ecrit "Only ${#all[@]} Backups exist for ${DB} and you want to keep $KEEP."
+        ecrit "If you have just started taking backups you may ignore this"
+        ecrit "Otherwise you may want to investigate why backups are not being taken"
+
+      elif [ "$number" -gt 0 ]
       then
 
         local date=$(date +%Y%m%d --date "$keep days ago")
@@ -232,6 +239,15 @@ cleanup_backups () {
 
             files=( $backup )
 
+            ((number--))
+
+          fi
+
+          if [[ "$number" -le 0 ]]
+          then
+
+            break
+
           fi
 
         done
@@ -241,7 +257,7 @@ cleanup_backups () {
   	  for file in "${files[@]}"
       do
 
-        echo "Deleting $file"
+        echo "Deleting Backup: $file"
   		  rm $file
 
       done
