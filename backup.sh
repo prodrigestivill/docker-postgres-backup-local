@@ -210,13 +210,31 @@ cleanup_backups () {
       #Clean old files
       local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
       local files=()
+      number=$((${#all[@]}-$KEEP))
+      echo "Number of Backups to be deleted: $number"
 
-      if [ $KEEP -gt 0 ]
+      if [ $number -gt 0 ]
       then
+
+        local date=$(date +%Y%m%d --date "$keep days ago")
+        date=$(date -d "$date")
+        echo "Cleaning files older than $date in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
+        date=$(date -d $date +%s)
       
-        echo "Cleaning older files in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
-        local files=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -mtime "+$((${KEEP}-1))" -name "${DB}-*"` )
-        local files=( `printf "%s\n" "${files[@]}" | sort -t/ -k3` )
+        for backup in ${all[@]}
+        do
+
+          local filemod=$(date -r "$backup" +%s)
+          echo "Checking Backup: $backup"
+          echo "File Last Modified: $(date -r $backup)"
+
+          if [[ "$date" -ge "$filemod" ]]
+
+            files=( $backup )
+
+          fi
+
+        done
 
       fi
 
