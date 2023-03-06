@@ -19,7 +19,7 @@ colwht='\033[0;97m' # White
 colrst='\033[0m'    # Text Reset
 
 verbosity=4
-matrix_verbosity=0
+#matrix_verbosity=0
 
 ### verbosity levels
 silent_lvl=0

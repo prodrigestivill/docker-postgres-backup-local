@@ -2,6 +2,10 @@
 
 source log.sh
 export LOGDIR="${BACKUP_DIR}/logs"
+export matrix_verbosity="${BACKUP_MAXTRIX_VERBOSITY}"
+export ELEMENT_SERVER="${BACKUP_ELEMENT_SERVER}"
+export ROOM_ID="${BACKUP_ROOM_ID}"
+export ACCESS_TOKEN="${BACKUP_ACCESS_TOKEN}"
 
 export PGHOST="${POSTGRES_HOST}"
 export PGPORT="${POSTGRES_PORT}"

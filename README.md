@@ -93,6 +93,9 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | TZ | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris"). |
 | WEBHOOK_URL | URL to be called after an error or after a successful backup (POST with a JSON payload, check `hooks/00-webhook` file for more info). Default disabled. |
 | WEBHOOK_EXTRA_ARGS | Extra arguments for the `curl` execution in the webhook (check `hooks/00-webhook` file for more info). |
+| ELEMENT_SERVER | Matrix Server Url for matrix notifications |
+| ROOM_ID | Matrix Room ID for where matrix notifications should be sent |
+| ACCESS_TOKEN | Matrix Access Tokens for sending notifications |
 
 #### Special Environment Variables
 
