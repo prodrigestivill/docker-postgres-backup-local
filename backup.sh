@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+set -Eeo pipefail
 source log.sh
 export LOGDIR="${BACKUP_DIR}/logs"
 export matrix_verbosity="${BACKUP_MAXTRIX_VERBOSITY}"
@@ -15,7 +16,6 @@ KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
 
 setup () {
-  set -Eeo pipefail
 
   Log_Open
 
@@ -237,6 +237,7 @@ cleanup_backups () {
           einfo "File Last Modified: $(date -r $backup)"
 
           if [[ "$date" -ge "$filemod" ]]
+          then
 
             files=( $backup )
 
