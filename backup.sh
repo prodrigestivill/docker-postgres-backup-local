@@ -118,7 +118,7 @@ do
 
       FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
 
-    elif [ "${link}" == "monthly"]
+    elif [ "${link}" == "monthly" ]
     then
 
       FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
