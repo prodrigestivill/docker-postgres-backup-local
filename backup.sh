@@ -118,7 +118,7 @@ create_backups () {
     create_dump
 
     einfo "Point last backup file to this last backup..."
-    ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
+    ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}" | einfo
 
     create_hardlinks "${FILE}" "daily"
     create_hardlinks "${FILE}" "monthly"
@@ -180,17 +180,17 @@ create_hardlinks () {
     DESTNEW="${DEST}-new"
     rm -rf "${DESTNEW}"
     mkdir "${DESTNEW}"
-    ln -f "${SRC}/"* "${DESTNEW}/"
+    ln -f "${SRC}/"* "${DESTNEW}/" | einfo
     rm -rf "${DEST}"
     einfo "Replacing ${INCREMENT} backup ${DEST} file this last backup..."
     mv "${DESTNEW}" "${DEST}"
   else
     einfo "Replacing ${INCREMENT} backup ${DEST} file this last backup..."
-    ln -vf "${SRC}" "${DEST}"
+    ln -vf "${SRC}" "${DEST}" | einfo
   fi
   # Update latest symlinks
   einfo "Replacing lastest ${INCREMENT} backup to this last backup..."
-  ln -svf "${DEST}" "${BACKUP_DIR}/${INCREMENT}/${DB}-latest"
+  ln -svf "${DEST}" "${BACKUP_DIR}/${INCREMENT}/${DB}-latest" | einfo
 
 }
 
