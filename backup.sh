@@ -17,6 +17,8 @@ KEEP_MINS=${BACKUP_KEEP_MINS}
 KEEP_DAYS=${BACKUP_KEEP_DAYS}
 KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
+WEEK_DAY="${BACKUP_WEEK_DAY}"
+MONTH_DAY="${BACKUP_MONTH_DAY}"
 
 Log_Open
 
@@ -122,6 +124,9 @@ do
 
 done
 
+MONTH_DAY=`date +%d`
+WEEK_DAY=`date +%A`
+
 edebug "...Finished Setting Up Environment"
 
 #Create Backups
@@ -143,8 +148,18 @@ create_backups () {
     ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}" | einfo
 
     create_hardlinks "${FILE}" "daily"
-    create_hardlinks "${FILE}" "monthly"
-    create_hardlinks "${FILE}" "weekly"
+    
+    if [ "${BACKUP_MONTH_DAY}" = "${MONTH_DAY}" ]
+    then
+
+      create_hardlinks "${FILE}" "monthly"
+
+    elif [ "${BACKUP_WEEK_DAY}" = "${WEEK_DAY}" ]
+    then
+
+      create_hardlinks "${FILE}" "weekly"
+
+    fi
 
     einfo "SQL backup created successfully"
 
