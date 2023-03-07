@@ -214,7 +214,7 @@ cleanup_backups () {
       do
 
         echo "Deleting $file"
-  		  rm $file
+  		  rm -r $file
 
       done
 
