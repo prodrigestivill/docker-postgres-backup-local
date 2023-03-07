@@ -68,7 +68,6 @@ function Log_Open() {
                 exec 1>$Pipe
                 PIPE_OPENED=1
                 enotify Logging to $LOGFILE  # (*)
-                [ $SUDO_USER ] && enotify "Sudo user: $SUDO_USER" #(*)
         fi
 }
 
