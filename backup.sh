@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 set -Eeo pipefail
-source log.sh
+source /log.sh
 
 export LOGDIR="${BACKUP_DIR}/logs"
 export DATETIME=`date +"%Y%m%d_%H%M%S"`
