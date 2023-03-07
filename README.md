@@ -77,6 +77,8 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
 | BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
 | BACKUP_KEEP_MINS | Number of minutes for `last` folder backups to keep before removal. Defaults to `1440`. |
+| BACKUP_WEEK_DAY | Day of the week to perform weekly updates. Defaults to Sunday |
+| BACKUP_MONTH_DAY | Day of the month to perform monthly updates. Defaults to 1 |
 | BACKUP_MATRIX_VERBOSITY | Set Verbosity of Matrix Notifications. Defaults to 0 which is disabled |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
