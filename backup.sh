@@ -98,8 +98,12 @@ done
 #Create Backups
 create_backups () {
 
+  edebug "${POSTGRES_DBS[@]}"
+
   for DB in ${POSTGRES_DBS}
   do
+
+    edebug "Backing up Database: ${DB}"
 
     LAST_FILENAME="${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
     FILE="${BACKUP_DIR}/last/${LAST_FILENAME}"
@@ -266,5 +270,6 @@ cleanup_backups () {
   done
 }
 
+einfo "Starting Backup..."
 create_backups
 cleanup_backups
