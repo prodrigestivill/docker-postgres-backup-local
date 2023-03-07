@@ -165,7 +165,7 @@ create_hardlinks () {
 
     FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
 
-  elif [ "${INCREMENT}" = "monthly"]
+  elif [ "${INCREMENT}" = "monthly" ]
   then
 
     FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
