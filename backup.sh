@@ -290,7 +290,7 @@ cleanup_backups () {
       do
 
         einfo "Deleting Backup: $file"
-  		  rm $file
+  		  rm -r $file
 
       done
 
