@@ -1,5 +1,7 @@
 #!/bin/bash -l
 
+# Adapted from https://technotes.adelerhof.eu/bash/logging/
+
 # export LOGDIR=/path/to/logfiles
 # export DATE=`date +"%Y%m%d"`
 # export DATETIME=`date +"%Y%m%d_%H%M%S"`
@@ -19,7 +21,7 @@ colwht='\033[0;97m' # White
 colrst='\033[0m'    # Text Reset
 
 verbosity=4
-#matrix_verbosity=0
+matrix_verbosity=0
 
 ### verbosity levels
 silent_lvl=0
@@ -106,7 +108,7 @@ while getopts ":smVGZ" opt ; do
                 edebug "-s specified: Silent mode"
                 ;;
         m)
-                matrix_verbosity=3
+                matrix_verbosity=$wrn_lvl
                 edebug "-m secified: Matrix mode"
                 ;;
         V)
