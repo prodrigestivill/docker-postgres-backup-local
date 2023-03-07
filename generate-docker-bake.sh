@@ -8,7 +8,7 @@ TAGS_EXTRA="14 13 12"
 PLATFORMS="linux/amd64 linux/arm64 linux/arm/v7 linux/s390x linux/ppc64le"
 TAGS_EXTRA_2="11 10"
 PLATFORMS_DEBIAN_2="linux/amd64 linux/arm64 linux/arm/v7"
-DOCKER_BAKE_FILE="docker-bake.hcl"
+DOCKER_BAKE_FILE="${1:-docker-bake.hcl}"
 
 cd "$(dirname "$0")"
 
