@@ -77,6 +77,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
 | BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
 | BACKUP_KEEP_MINS | Number of minutes for `last` folder backups to keep before removal. Defaults to `1440`. |
+| BACKUP_MATRIX_VERBOSITY | Set Verbosity of Matrix Notifications. Defaults to 0 which is disabled |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
 | POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |
@@ -93,6 +94,10 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | TZ | [POSIX TZ variable](https://www.gnu.org/software/libc/manual/html_node/TZ-Variable.html) specifying the timezone used to evaluate SCHEDULE cron (example "Europe/Paris"). |
 | WEBHOOK_URL | URL to be called after an error or after a successful backup (POST with a JSON payload, check `hooks/00-webhook` file for more info). Default disabled. |
 | WEBHOOK_EXTRA_ARGS | Extra arguments for the `curl` execution in the webhook (check `hooks/00-webhook` file for more info). |
+| LOGDIR | Directory to save the logs at. Defaults to /backups/logs |
+| ELEMENT_SERVER | Matrix Server Url for matrix notifications |
+| ROOM_ID | Matrix Room ID for where matrix notifications should be sent |
+| ACCESS_TOKEN | Matrix Access Tokens for sending notifications |
 
 #### Special Environment Variables
 
