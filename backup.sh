@@ -16,88 +16,84 @@ KEEP_DAYS=${BACKUP_KEEP_DAYS}
 KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
 
-setup () {
+Log_Open
 
-  Log_Open
+HOOKS_DIR="/hooks"
+if [ -d "${HOOKS_DIR}" ]; then
+  on_error(){
+    run-parts -a "error" "${HOOKS_DIR}"
+  }
+  trap 'on_error' ERR
+fi
 
-  HOOKS_DIR="/hooks"
-  if [ -d "${HOOKS_DIR}" ]; then
-    on_error(){
-      run-parts -a "error" "${HOOKS_DIR}"
-    }
-    trap 'on_error' ERR
-  fi
+if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
+  eerror "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
+  exit 1
+fi
 
-  if [ "${POSTGRES_DB}" = "**None**" -a "${POSTGRES_DB_FILE}" = "**None**" ]; then
-    eerror "You need to set the POSTGRES_DB or POSTGRES_DB_FILE environment variable."
-    exit 1
-  fi
-
-  if [ "${POSTGRES_HOST}" = "**None**" ]; then
-    if [ -n "${POSTGRES_PORT_5432_TCP_ADDR}" ]; then
-      POSTGRES_HOST=${POSTGRES_PORT_5432_TCP_ADDR}
-      POSTGRES_PORT=${POSTGRES_PORT_5432_TCP_PORT}
-    else
-      eerror "You need to set the POSTGRES_HOST environment variable."
-      exit 1
-    fi
-  fi
-
-  if [ "${POSTGRES_USER}" = "**None**" -a "${POSTGRES_USER_FILE}" = "**None**" ]; then
-    eerror "You need to set the POSTGRES_USER or POSTGRES_USER_FILE environment variable."
-    exit 1
-  fi
-
-  if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
-    eerror "You need to set the POSTGRES_PASSWORD or POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE environment variable or link to a container named POSTGRES."
-    exit 1
-  fi
-
-  #Process vars
-  if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
-    POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
-  elif [ -r "${POSTGRES_DB_FILE}" ]; then
-    POSTGRES_DBS=$(cat "${POSTGRES_DB_FILE}")
+if [ "${POSTGRES_HOST}" = "**None**" ]; then
+  if [ -n "${POSTGRES_PORT_5432_TCP_ADDR}" ]; then
+    POSTGRES_HOST=${POSTGRES_PORT_5432_TCP_ADDR}
+    POSTGRES_PORT=${POSTGRES_PORT_5432_TCP_PORT}
   else
-    eerror "Missing POSTGRES_DB_FILE file."
+    eerror "You need to set the POSTGRES_HOST environment variable."
     exit 1
   fi
-  if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
-    export PGUSER="${POSTGRES_USER}"
-  elif [ -r "${POSTGRES_USER_FILE}" ]; then
-    export PGUSER=$(cat "${POSTGRES_USER_FILE}")
-  else
-    eerror "Missing POSTGRES_USER_FILE file."
-    exit 1
-  fi
-  if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
-    export PGPASSWORD="${POSTGRES_PASSWORD}"
-  elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
-    export PGPASSWORD=$(cat "${POSTGRES_PASSWORD_FILE}")
-  elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
-    export PGPASSFILE="${POSTGRES_PASSFILE_STORE}"
-  else
-    eerror "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
-    exit 1
-  fi
+fi
+
+if [ "${POSTGRES_USER}" = "**None**" -a "${POSTGRES_USER_FILE}" = "**None**" ]; then
+  eerror "You need to set the POSTGRES_USER or POSTGRES_USER_FILE environment variable."
+  exit 1
+fi
+
+if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
+  eerror "You need to set the POSTGRES_PASSWORD or POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE environment variable or link to a container named POSTGRES."
+  exit 1
+fi
+
+#Process vars
+if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
+  POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
+elif [ -r "${POSTGRES_DB_FILE}" ]; then
+  POSTGRES_DBS=$(cat "${POSTGRES_DB_FILE}")
+else
+  eerror "Missing POSTGRES_DB_FILE file."
+  exit 1
+fi
+if [ "${POSTGRES_USER_FILE}" = "**None**" ]; then
+  export PGUSER="${POSTGRES_USER}"
+elif [ -r "${POSTGRES_USER_FILE}" ]; then
+  export PGUSER=$(cat "${POSTGRES_USER_FILE}")
+else
+  eerror "Missing POSTGRES_USER_FILE file."
+  exit 1
+fi
+if [ "${POSTGRES_PASSWORD_FILE}" = "**None**" -a "${POSTGRES_PASSFILE_STORE}" = "**None**" ]; then
+  export PGPASSWORD="${POSTGRES_PASSWORD}"
+elif [ -r "${POSTGRES_PASSWORD_FILE}" ]; then
+  export PGPASSWORD=$(cat "${POSTGRES_PASSWORD_FILE}")
+elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
+  export PGPASSFILE="${POSTGRES_PASSFILE_STORE}"
+else
+  eerror "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
+  exit 1
+fi
 
 
-  # Pre-backup hook
-  if [ -d "${HOOKS_DIR}" ]; then
-    run-parts -a "pre-backup" --exit-on-error "${HOOKS_DIR}"
-  fi
+# Pre-backup hook
+if [ -d "${HOOKS_DIR}" ]; then
+  run-parts -a "pre-backup" --exit-on-error "${HOOKS_DIR}"
+fi
 
-  #Initialize dirs
-  FREQUENCY=( last daily weekly monthly )
+#Initialize dirs
+FREQUENCY=( last daily weekly monthly )
 
-  for f in ${FREQUENCY[@]}
-  do
-  
-    mkdir -p "${BACKUP_DIR}/${f}/"
+for f in ${FREQUENCY[@]}
+do
 
-  done
+  mkdir -p "${BACKUP_DIR}/${f}/"
 
-}
+done
 
 #Create Backups
 create_backups () {
@@ -270,6 +266,5 @@ cleanup_backups () {
   done
 }
 
-setup
 create_backups
 cleanup_backups
