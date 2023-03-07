@@ -6,7 +6,7 @@ source /log.sh
 export LOGDIR="${BACKUP_DIR}/logs"
 export DATETIME=`date +"%Y%m%d_%H%M%S"`
 
-export matrix_verbosity=${BACKUP_MATRIX_VERBOSITY}
+export matrix_verbosity="${BACKUP_MATRIX_VERBOSITY}"
 export ELEMENT_SERVER="${BACKUP_ELEMENT_SERVER}"
 export ROOM_ID="${BACKUP_ROOM_ID}"
 export ACCESS_TOKEN="${BACKUP_ACCESS_TOKEN}"
@@ -83,6 +83,26 @@ elif [ -r "${POSTGRES_PASSFILE_STORE}" ]; then
 else
   eerror "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
   exit 1
+fi
+
+if [ $MATRIX_VERBOSITY -gt 0 ]
+then
+
+    if [ "${BACKUP_ELEMENT_SERVER}" = "**None**" ]; then
+      eerror "You need to set the BACKUP_ELEMENT_SERVER environment variable or set BACKUP_MATRIX_VERBOSITY to 0."
+      exit 1
+    fi
+
+    if [ "${BACKUP_ROOM_ID}" = "**None**" ]; then
+      eerror "You need to set the BACKUP_ROOM_ID environment variable or set BACKUP_MATRIX_VERBOSITY to 0."
+      exit 1
+    fi
+
+    if [ "${BACKUP_ACCESS_TOKEN}" = "**None**" ]; then
+      eerror "You need to set the BACKUP_ACCESS_TOKEN environment variable or set BACKUP_MATRIX_VERBOSITY to 0."
+      exit 1
+    fi
+
 fi
 
 edebug "...Finished Processing Variables"
