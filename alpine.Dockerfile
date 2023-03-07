@@ -5,7 +5,7 @@ ARG GOCRONVER=v0.0.10
 ARG TARGETOS
 ARG TARGETARCH
 RUN set -x \
-	&& apk update && apk add ca-certificates curl \
+	&& apk update && apk add ca-certificates curl procps \
 	&& curl -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH-static.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron
 
@@ -27,14 +27,24 @@ ENV POSTGRES_DB="**None**" \
     BACKUP_KEEP_WEEKS=4 \
     BACKUP_KEEP_MONTHS=6 \
     BACKUP_KEEP_MINS=1440 \
+    BACKUP_WEEK_DAY="Sunday" \
+    BACKUP_MONTH_DAY=1 \
+    BACKUP_MATRIX_VERBOSITY=0 \
+    BACKUP_ELEMENT_SERVER="**None**" \
+    BACKUP_ROOM_ID="**None**" \
+    BACKUP_ACCESS_TOKEN="**None**" \
+    LOGDIR=/backups/logs \
     HEALTHCHECK_PORT=8080 \
     WEBHOOK_URL="**None**" \
     WEBHOOK_EXTRA_ARGS=""
 
 COPY hooks /hooks
 COPY backup.sh /backup.sh
+COPY log.sh /log.sh
 
 VOLUME /backups
+VOLUME /backups/logs/
+VOLUME /backups/logs/backup
 
 ENTRYPOINT ["/bin/sh", "-c"]
 CMD ["exec /usr/local/bin/go-cron -s \"$SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh"]
