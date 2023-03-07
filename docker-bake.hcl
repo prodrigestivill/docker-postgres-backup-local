@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-14", "debian-13", "debian-12", "debian-11", "debian-10", "alpine-14", "alpine-13", "alpine-12", "alpine-11", "alpine-10"]
+	targets = ["debian-latest", "alpine-latest", "debian-14", "debian-13", "debian-12", "debian-11", "alpine-14", "alpine-13", "alpine-12", "alpine-11"]
 }
 
 variable "REGISTRY_PREFIX" {
@@ -123,25 +123,5 @@ target "alpine-11" {
 	tags = [
 		"${REGISTRY_PREFIX}${IMAGE_NAME}:11-alpine",
 		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:11-alpine-${BUILD_REVISION}" : ""
-	]
-}
-
-target "debian-10" {
-	inherits = ["debian"]
-	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7"]
-	args = {"BASETAG" = "10"}
-	tags = [
-		"${REGISTRY_PREFIX}${IMAGE_NAME}:10",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:10-debian-${BUILD_REVISION}" : ""
-	]
-}
-
-target "alpine-10" {
-	inherits = ["alpine"]
-	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
-	args = {"BASETAG" = "10-alpine"}
-	tags = [
-		"${REGISTRY_PREFIX}${IMAGE_NAME}:10-alpine",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:10-alpine-${BUILD_REVISION}" : ""
 	]
 }

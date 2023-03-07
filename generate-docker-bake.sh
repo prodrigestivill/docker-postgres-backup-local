@@ -6,7 +6,7 @@ GOCRONVER="v0.0.10"
 MAIN_TAG="15"
 TAGS_EXTRA="14 13 12"
 PLATFORMS="linux/amd64 linux/arm64 linux/arm/v7 linux/s390x linux/ppc64le"
-TAGS_EXTRA_2="11 10"
+TAGS_EXTRA_2="11"
 PLATFORMS_DEBIAN_2="linux/amd64 linux/arm64 linux/arm/v7"
 DOCKER_BAKE_FILE="${1:-docker-bake.hcl}"
 
