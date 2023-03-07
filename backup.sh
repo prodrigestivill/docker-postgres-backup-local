@@ -177,15 +177,15 @@ do
   do
 
     #Clean old files
-    local all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
-    local files=()
+    all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
+    files=()
 
     if [ $KEEP -gt 0 ]
     then
     
       echo "Cleaning older files in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
-      local files=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -mtime "+$((${KEEP}-1))" -name "${DB}-*"` )
-      local files=( `printf "%s\n" "${files[@]}" | sort -t/ -k3` )
+      files=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -mtime "+$((${KEEP}-1))" -name "${DB}-*"` )
+      files=( `printf "%s\n" "${files[@]}" | sort -t/ -k3` )
 
     fi
 
