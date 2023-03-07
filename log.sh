@@ -50,7 +50,15 @@ function elog() {
 
         if [ $matrix_verbosity -ge $verb_lvl ]; then
                 datestring=`date +"%Y-%m-%d %H:%M:%S"`
-                ematrix "$datestring - $@"
+                message="$datestring - $@"
+                message="${message/\\$colblk/}"
+                message="${message/\\$colred/}"
+                message="${message/\\$colgrn/}"
+                message="${message/\\$colylw/}"
+                message="${message/\\$colpur/}"
+                message="${message/\\$colwht/}"
+                message="${message/\\$colrst/}"
+                ematrix "$message"
         fi
 }
 
