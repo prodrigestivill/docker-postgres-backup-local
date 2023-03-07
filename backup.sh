@@ -5,6 +5,8 @@ source /log.sh
 
 export LOGDIR="${BACKUP_DIR}/logs"
 export DATETIME=`date +"%Y%m%d_%H%M%S"`
+
+export matrix_verbosity=${BACKUP_MATRIX_VERBOSITY}
 export ELEMENT_SERVER="${BACKUP_ELEMENT_SERVER}"
 export ROOM_ID="${BACKUP_ROOM_ID}"
 export ACCESS_TOKEN="${BACKUP_ACCESS_TOKEN}"
