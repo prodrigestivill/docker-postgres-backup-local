@@ -18,6 +18,8 @@ KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
 
 Log_Open
 
+edebug "Starting To Setup Environment..."
+
 HOOKS_DIR="/hooks"
 if [ -d "${HOOKS_DIR}" ]; then
   on_error(){
@@ -51,6 +53,8 @@ if [ "${POSTGRES_PASSWORD}" = "**None**" -a "${POSTGRES_PASSWORD_FILE}" = "**Non
   exit 1
 fi
 
+edebug "Starting To Process Variables..."
+
 #Process vars
 if [ "${POSTGRES_DB_FILE}" = "**None**" ]; then
   POSTGRES_DBS=$(echo "${POSTGRES_DB}" | tr , " ")
@@ -79,6 +83,7 @@ else
   exit 1
 fi
 
+edebug "...Finished Processing Variables"
 
 # Pre-backup hook
 if [ -d "${HOOKS_DIR}" ]; then
@@ -94,6 +99,8 @@ do
   mkdir -p "${BACKUP_DIR}/${f}/"
 
 done
+
+edebug "...Finished Setting Up Environment"
 
 #Create Backups
 create_backups () {
