@@ -87,7 +87,7 @@ else
   exit 1
 fi
 
-if [ $MATRIX_VERBOSITY -gt 0 ]
+if [ $matrix_verbosity -gt 0 ]
 then
 
     if [ "${BACKUP_ELEMENT_SERVER}" = "**None**" ]; then
