@@ -43,8 +43,6 @@ COPY backup.sh /backup.sh
 COPY log.sh /log.sh
 
 VOLUME /backups
-VOLUME /backups/logs/
-VOLUME /backups/logs/backup
 
 ENTRYPOINT ["/bin/sh", "-c"]
 CMD ["exec /usr/local/bin/go-cron -s \"$SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh"]
