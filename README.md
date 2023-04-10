@@ -77,7 +77,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 | BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
 | BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |
 | BACKUP_KEEP_MINS | Number of minutes for `last` folder backups to keep before removal. Defaults to `1440`. |
-| COMPRESS_BACKUPS | Compresses backups using `gzip`. Significantly reduces backup size, recommended to leave enabled unless you have a reason to disable it. Defaults to `true`. |
+| COMPRESS_BACKUPS | Compresses backups using `gzip`. Significantly reduces backup size, recommended to leave enabled unless you have a reason to disable it. Defaults to `TRUE`. |
 | HEALTHCHECK_PORT | Port listening for cron-schedule health check. Defaults to `8080`. |
 | POSTGRES_DB | Comma or space separated list of postgres databases to backup. Required. |
 | POSTGRES_DB_FILE | Alternative to POSTGRES_DB, but with one database per line, for usage with docker secrets. |

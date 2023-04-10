@@ -9,7 +9,8 @@ RUN set -x \
 	&& curl --fail --retry 4 --retry-all-errors -L https://github.com/prodrigestivill/go-cron/releases/download/$GOCRONVER/go-cron-$TARGETOS-$TARGETARCH-static.gz | zcat > /usr/local/bin/go-cron \
 	&& chmod a+x /usr/local/bin/go-cron
 
-ENV POSTGRES_DB="**None**" \
+ENV COMPRESS_BACKUPS="TRUE" \
+    POSTGRES_DB="**None**" \
     POSTGRES_DB_FILE="**None**" \
     POSTGRES_HOST="**None**" \
     POSTGRES_PORT=5432 \
