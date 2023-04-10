@@ -90,10 +90,18 @@ for DB in ${POSTGRES_DBS}; do
   #Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
+    if [ "${COMPRESS_BACKUPS}" = "TRUE" ]; then
+      pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
+    else
+      pg_dumpall -l "${DB}" ${POSTGRES_EXTRA_OPTS} > "${FILE}"
+    fi
   else
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
-    pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
+    if [ "${COMPRESS_BACKUPS}" = "TRUE" ]; then
+      pg_dump -d "${DB}" ${POSTGRES_EXTRA_OPTS} | gzip > "${FILE}"
+    else
+      pg_dump -d "${DB}" ${POSTGRES_EXTRA_OPTS} > "${FILE}"
+    fi
   fi
   #Copy (hardlink) for each entry
   if [ -d "${FILE}" ]; then
