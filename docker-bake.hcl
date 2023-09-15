@@ -1,5 +1,5 @@
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-14", "debian-13", "debian-12", "alpine-14", "alpine-13", "alpine-12"]
+	targets = ["debian-latest", "alpine-latest", "debian-15", "debian-14", "debian-13", "debian-12", "alpine-15", "alpine-14", "alpine-13", "alpine-12"]
 }
 
 variable "REGISTRY_PREFIX" {
@@ -27,20 +27,40 @@ target "alpine" {
 target "debian-latest" {
 	inherits = ["debian"]
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
-	args = {"BASETAG" = "15"}
+	args = {"BASETAG" = "16"}
 	tags = [
 		"${REGISTRY_PREFIX}${IMAGE_NAME}:latest",
-		"${REGISTRY_PREFIX}${IMAGE_NAME}:15",
-		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:15-debian-${BUILD_REVISION}" : ""
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:16",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:16-debian-${BUILD_REVISION}" : ""
 	]
 }
 
 target "alpine-latest" {
 	inherits = ["alpine"]
 	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
-	args = {"BASETAG" = "15-alpine"}
+	args = {"BASETAG" = "16-alpine"}
 	tags = [
 		"${REGISTRY_PREFIX}${IMAGE_NAME}:alpine",
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:16-alpine",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:16-alpine-${BUILD_REVISION}" : ""
+	]
+}
+
+target "debian-15" {
+	inherits = ["debian"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
+	args = {"BASETAG" = "15"}
+	tags = [
+		"${REGISTRY_PREFIX}${IMAGE_NAME}:15",
+		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:15-debian-${BUILD_REVISION}" : ""
+	]
+}
+
+target "alpine-15" {
+	inherits = ["alpine"]
+	platforms = ["linux/amd64", "linux/arm64", "linux/arm/v7", "linux/s390x", "linux/ppc64le"]
+	args = {"BASETAG" = "15-alpine"}
+	tags = [
 		"${REGISTRY_PREFIX}${IMAGE_NAME}:15-alpine",
 		notequal("", BUILD_REVISION) ? "${REGISTRY_PREFIX}${IMAGE_NAME}:15-alpine-${BUILD_REVISION}" : ""
 	]
