@@ -10,6 +10,8 @@ Supports the following Docker architectures: `linux/amd64`, `linux/arm64`, `linu
 
 Please consider reading detailed the [How the backups folder works?](#how-the-backups-folder-works).
 
+This application requires the docker volume `/backups` to be a POSIX-compliant filesystem to store the backups (mainly with support for hardlinks and softlinks). So filesystems like VFAT, EXFAT, SMB/CIFS, ... can't be used with this docker image.
+
 ## Usage
 
 Docker:
