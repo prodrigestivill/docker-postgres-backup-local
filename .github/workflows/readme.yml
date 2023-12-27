@@ -1,0 +1,31 @@
+name: README
+
+on:
+  push:
+    branches:
+      - 'main'
+    paths:
+      - 'README.md'
+      - 'dockerhub-header.md'
+      - '.github/workflows/readme.yml'
+
+jobs:
+  push-readme:
+    runs-on: ubuntu-22.04
+    environment: docker.io
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Generate README for DockerHub
+        run: cp dockerhub-header.md dockerhub.md && awk '{if(p)print}/^# /{p=1}' README.md >> dockerhub.md
+
+      - name: Push README to DockerHub
+        uses: christian-korneck/update-container-description-action@v1
+        env:
+          DOCKER_USER: ${{ secrets.DOCKERHUB_USERNAME }}
+          DOCKER_PASS: ${{ secrets.DOCKERHUB_TOKEN }}
+        with:
+          destination_container_repo: ${{ secrets.DOCKERHUB_USERNAME }}/postgres-backup-local
+          provider: dockerhub
+          short_description: 'Backup PostgresSQL to local filesystem with periodic backups and rotate backups.'
+          readme_file: 'dockerhub.md'
