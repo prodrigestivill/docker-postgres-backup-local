@@ -7,7 +7,7 @@ on:
     paths-ignore:
       - '**.md'
       - '.gitignore'
-      - '.github/workflows/readme.yml'
+      - '.github/workflows/pushrm.yml'
   pull_request:
     paths-ignore:
       - '**.md'

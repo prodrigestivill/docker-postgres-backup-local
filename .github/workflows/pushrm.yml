@@ -1,4 +1,4 @@
-name: README
+name: Docker Push Readme
 
 on:
   push:
@@ -7,7 +7,7 @@ on:
     paths:
       - 'README.md'
       - 'dockerhub-header.md'
-      - '.github/workflows/readme.yml'
+      - '.github/workflows/pushrm.yml'
 
 jobs:
   push-readme:
