@@ -1,4 +1,12 @@
 #!/usr/bin/env bash
+
+export PGHOST="${POSTGRES_HOST}"
+export PGPORT="${POSTGRES_PORT}"
+KEEP_MINS=${BACKUP_KEEP_MINS}
+KEEP_DAYS=${BACKUP_KEEP_DAYS}
+KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
+KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
+
 set -Eeo pipefail
 
 HOOKS_DIR="/hooks"
@@ -61,12 +69,6 @@ else
   echo "Missing POSTGRES_PASSWORD_FILE or POSTGRES_PASSFILE_STORE file."
   exit 1
 fi
-export PGHOST="${POSTGRES_HOST}"
-export PGPORT="${POSTGRES_PORT}"
-KEEP_MINS=${BACKUP_KEEP_MINS}
-KEEP_DAYS=${BACKUP_KEEP_DAYS}
-KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
-KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
 
 # Pre-backup hook
 if [ -d "${HOOKS_DIR}" ]; then
@@ -74,19 +76,23 @@ if [ -d "${HOOKS_DIR}" ]; then
 fi
 
 #Initialize dirs
-mkdir -p "${BACKUP_DIR}/last/" "${BACKUP_DIR}/daily/" "${BACKUP_DIR}/weekly/" "${BACKUP_DIR}/monthly/"
+FREQUENCY=( last daily weekly monthly )
 
-#Loop all databases
-for DB in ${POSTGRES_DBS}; do
-  #Initialize filename vers
+for f in ${FREQUENCY[@]}
+do
+
+  mkdir -p "${BACKUP_DIR}/${f}/"
+
+done
+
+#Create Backups
+links=( "daily" "monthly" "weekly" )
+for DB in ${POSTGRES_DBS}
+do
+
   LAST_FILENAME="${DB}-`date +%Y%m%d-%H%M%S`${BACKUP_SUFFIX}"
-  DAILY_FILENAME="${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
-  WEEKLY_FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
-  MONTHY_FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
   FILE="${BACKUP_DIR}/last/${LAST_FILENAME}"
-  DFILE="${BACKUP_DIR}/daily/${DAILY_FILENAME}"
-  WFILE="${BACKUP_DIR}/weekly/${WEEKLY_FILENAME}"
-  MFILE="${BACKUP_DIR}/monthly/${MONTHY_FILENAME}"
+
   #Create dump
   if [ "${POSTGRES_CLUSTER}" = "TRUE" ]; then
     echo "Creating cluster dump of ${DB} database from ${POSTGRES_HOST}..."
@@ -95,51 +101,102 @@ for DB in ${POSTGRES_DBS}; do
     echo "Creating dump of ${DB} database from ${POSTGRES_HOST}..."
     pg_dump -d "${DB}" -f "${FILE}" ${POSTGRES_EXTRA_OPTS}
   fi
-  #Copy (hardlink) for each entry
-  if [ -d "${FILE}" ]; then
-    DFILENEW="${DFILE}-new"
-    WFILENEW="${WFILE}-new"
-    MFILENEW="${MFILE}-new"
-    rm -rf "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
-    mkdir "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
-    ln -f "${FILE}/"* "${DFILENEW}/"
-    ln -f "${FILE}/"* "${WFILENEW}/"
-    ln -f "${FILE}/"* "${MFILENEW}/"
-    rm -rf "${DFILE}" "${WFILE}" "${MFILE}"
-    echo "Replacing daily backup ${DFILE} folder this last backup..."
-    mv "${DFILENEW}" "${DFILE}"
-    echo "Replacing weekly backup ${WFILE} folder this last backup..."
-    mv "${WFILENEW}" "${WFILE}"
-    echo "Replacing monthly backup ${MFILE} folder this last backup..."
-    mv "${MFILENEW}" "${MFILE}"
-  else
-    echo "Replacing daily backup ${DFILE} file this last backup..."
-    ln -vf "${FILE}" "${DFILE}"
-    echo "Replacing weekly backup ${WFILE} file this last backup..."
-    ln -vf "${FILE}" "${WFILE}"
-    echo "Replacing monthly backup ${MFILE} file this last backup..."
-    ln -vf "${FILE}" "${MFILE}"
-  fi
-  # Update latest symlinks
+
   echo "Point last backup file to this last backup..."
   ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
-  echo "Point latest daily backup to this last backup..."
-  ln -svf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
-  echo "Point latest weekly backup to this last backup..."
-  ln -svf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
-  echo "Point latest monthly backup to this last backup..."
-  ln -svf "${MONTHY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
-  #Clean old files
-  echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
-  find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-  find "${BACKUP_DIR}/daily" -maxdepth 1 -mtime "+${KEEP_DAYS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-  find "${BACKUP_DIR}/weekly" -maxdepth 1 -mtime "+${KEEP_WEEKS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-  find "${BACKUP_DIR}/monthly" -maxdepth 1 -mtime "+${KEEP_MONTHS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'
-done
 
-echo "SQL backup created successfully"
+  for link in ${links}
+  do
+  
+    if [ "${link}" == "daily" ]
+    then
+
+      FILENAME="${DB}-`date +%Y%m%d`${BACKUP_SUFFIX}"
+
+    elif [ "${link}" == "weekly" ]
+    then
+
+      FILENAME="${DB}-`date +%G%V`${BACKUP_SUFFIX}"
+
+    elif [ "${link}" == "monthly" ]
+    then
+
+      FILENAME="${DB}-`date +%Y%m`${BACKUP_SUFFIX}"
+
+    fi
+
+    DEST="${BACKUP_DIR}/${link}/${FILENAME}"
+
+    #Copy (hardlink) for each entry
+    if [ -d "${FILE}" ]
+    then
+      DESTNEW="${DEST}-new"
+      rm -rf "${DESTNEW}"
+      mkdir "${DESTNEW}"
+      ln -f "${FILE}/"* "${DESTNEW}/"
+      rm -rf "${DEST}"
+      echo "Replacing ${link} backup ${DEST} file this last backup..."
+      mv "${DESTNEW}" "${DEST}"
+    else
+      echo "Replacing ${link} backup ${DEST} file this last backup..."
+      ln -vf "${FILE}" "${DEST}"
+    fi
+    # Update latest symlinks
+    echo "Replacing lastest ${link} backup to this last backup..."
+    ln -svf "${DEST}" "${BACKUP_DIR}/${link}/${DB}-latest"
+
+  done
+
+  echo "SQL backup created successfully"
+
+done
 
 # Post-backup hook
 if [ -d "${HOOKS_DIR}" ]; then
   run-parts -a "post-backup" --reverse --exit-on-error "${HOOKS_DIR}"
 fi
+
+#Clean up old backups
+for folder in "${FREQUENCY[@]}"
+do
+  if [ $folder == 'last' ]
+  then
+    KEEP=$KEEP_MINS
+  elif [ $folder == 'daily' ]
+  then
+    KEEP=$KEEP_DAYS
+  elif [ $folder == "weekly" ]
+  then
+    KEEP=$KEEP_WEEKS
+  elif [ $folder == 'monthly' ]
+  then
+    KEEP=$KEEP_MONTHS
+  fi
+
+  for DB in ${POSTGRES_DBS}
+  do
+
+    #Clean old files
+    all=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -name "${DB}-*"` )
+    files=()
+
+    if [ $KEEP -gt 0 ]
+    then
+    
+      echo "Cleaning older files in ${folder} for ${DB} database from ${POSTGRES_HOST}..."
+      files=( `find "${BACKUP_DIR}/${folder}" -maxdepth 1 -mtime "+$((${KEEP}-1))" -name "${DB}-*"` )
+      files=( `printf "%s\n" "${files[@]}" | sort -t/ -k3` )
+
+    fi
+
+	  for file in "${files[@]}"
+    do
+
+      echo "Deleting $file"
+		  rm -r $file
+
+    done
+
+  done
+
+done
