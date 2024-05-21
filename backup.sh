@@ -121,14 +121,22 @@ for DB in ${POSTGRES_DBS}; do
     ln -vf "${FILE}" "${MFILE}"
   fi
   # Update latest symlinks
-  echo "Point last backup file to this last backup..."
-  ln -svf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
-  echo "Point latest daily backup to this last backup..."
-  ln -svf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
-  echo "Point latest weekly backup to this last backup..."
-  ln -svf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
-  echo "Point latest monthly backup to this last backup..."
-  ln -svf "${MONTHY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
+  LATEST_LN_ARG=""
+  if [ "${BACKUP_LATEST_TYPE}" = "symlink" ]; then
+    LATEST_LN_ARG="-s"
+  fi
+  if [ "${BACKUP_LATEST_TYPE}" = "symlink" -o "${BACKUP_LATEST_TYPE}" = "hardlink"  ]; then
+    echo "Point last backup file to this last backup..."
+    ln "${LATEST_LN_ARG}" -vf "${LAST_FILENAME}" "${BACKUP_DIR}/last/${DB}-latest${BACKUP_SUFFIX}"
+    echo "Point latest daily backup to this last backup..."
+    ln "${LATEST_LN_ARG}" -vf "${DAILY_FILENAME}" "${BACKUP_DIR}/daily/${DB}-latest${BACKUP_SUFFIX}"
+    echo "Point latest weekly backup to this last backup..."
+    ln "${LATEST_LN_ARG}" -vf "${WEEKLY_FILENAME}" "${BACKUP_DIR}/weekly/${DB}-latest${BACKUP_SUFFIX}"
+    echo "Point latest monthly backup to this last backup..."
+    ln "${LATEST_LN_ARG}" -vf "${MONTHY_FILENAME}" "${BACKUP_DIR}/monthly/${DB}-latest${BACKUP_SUFFIX}"
+  else # [ "${BACKUP_LATEST_TYPE}" = "none"  ]
+    echo "Not updating lastest backup."
+  fi
   #Clean old files
   echo "Cleaning older files for ${DB} database from ${POSTGRES_HOST}..."
   find "${BACKUP_DIR}/last" -maxdepth 1 -mmin "+${KEEP_MINS}" -name "${DB}-*${BACKUP_SUFFIX}" -exec rm -rvf '{}' ';'

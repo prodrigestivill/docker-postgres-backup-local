@@ -37,6 +37,7 @@ ENV POSTGRES_DB="**None**" \
     SCHEDULE="@daily" \
     BACKUP_DIR="/backups" \
     BACKUP_SUFFIX=".sql.gz" \
+    BACKUP_LATEST_TYPE="symlink" \
     BACKUP_KEEP_DAYS=7 \
     BACKUP_KEEP_WEEKS=4 \
     BACKUP_KEEP_MONTHS=6 \
