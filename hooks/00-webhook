@@ -32,3 +32,45 @@ if [ "${WEBHOOK_URL}" != "**None**" ]; then
       ;;
   esac
 fi
+
+case "${ACTION}" in
+  "error")
+    if [ "${WEBHOOK_ERROR_URL}" != "**None**" ]; then
+      echo "Execute error webhook call to ${WEBHOOK_ERROR_URL}"
+      curl --request POST \
+        --url "${WEBHOOK_ERROR_URL}" \
+        --header 'Content-Type: application/json' \
+        --data '{"status": "error"}' \
+        --max-time 10 \
+        --retry 5 \
+        ${WEBHOOK_EXTRA_ARGS}
+    fi
+  ;;
+
+  "pre-backup")
+    if [ "${WEBHOOK_PRE_BACKUP_URL}" != "**None**" ]; then
+      echo "Execute pre-backup webhook call to ${WEBHOOK_PRE_BACKUP_URL}"
+      curl --request POST \
+        --url "${WEBHOOK_PRE_BACKUP_URL}" \
+        --header 'Content-Type: application/json' \
+        --data '{"status": "error"}' \
+        --max-time 10 \
+        --retry 5 \
+        ${WEBHOOK_EXTRA_ARGS}
+    fi
+  ;;
+
+  "post-backup")
+    if [ "${WEBHOOK_POST_BACKUP_URL}" != "**None**" ]; then
+      echo "Execute post-backup webhook call to ${WEBHOOK_POST_BACKUP_URL}"
+      curl --request POST \
+        --url "${WEBHOOK_POST_BACKUP_URL}" \
+        --header 'Content-Type: application/json' \
+        --data '{"status": "error"}' \
+        --max-time 10 \
+        --retry 5 \
+        ${WEBHOOK_EXTRA_ARGS}
+    fi
+  ;;
+esac
+
