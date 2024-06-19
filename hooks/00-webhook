@@ -53,7 +53,7 @@ case "${ACTION}" in
       curl --request POST \
         --url "${WEBHOOK_PRE_BACKUP_URL}" \
         --header 'Content-Type: application/json' \
-        --data '{"status": "error"}' \
+        --data '{"status": "pre-backup"}' \
         --max-time 10 \
         --retry 5 \
         ${WEBHOOK_EXTRA_ARGS}
@@ -66,11 +66,10 @@ case "${ACTION}" in
       curl --request POST \
         --url "${WEBHOOK_POST_BACKUP_URL}" \
         --header 'Content-Type: application/json' \
-        --data '{"status": "error"}' \
+        --data '{"status": "post-backup"}' \
         --max-time 10 \
         --retry 5 \
         ${WEBHOOK_EXTRA_ARGS}
     fi
   ;;
 esac
-
