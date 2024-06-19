@@ -44,6 +44,9 @@ ENV POSTGRES_DB="**None**" \
     BACKUP_KEEP_MINS=1440 \
     HEALTHCHECK_PORT=8080 \
     WEBHOOK_URL="**None**" \
+    WEBHOOK_ERROR_URL="**None**" \
+    WEBHOOK_PRE_BACKUP_URL="**None**" \
+    WEBHOOK_POST_BACKUP_URL="**None**" \
     WEBHOOK_EXTRA_ARGS=""
 
 COPY hooks /hooks
