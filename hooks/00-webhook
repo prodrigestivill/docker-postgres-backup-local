@@ -5,9 +5,9 @@ set -e
 # Possible actions: error, pre-backup, post-backup
 ACTION="${1}"
 
-if [ "${WEBHOOK_URL}" != "**None**" ]; then
-  case "${ACTION}" in
-    "error")
+case "${ACTION}" in
+  "error")
+    if [ "${WEBHOOK_URL}" != "**None**" ]; then
       echo "Execute error webhook call to ${WEBHOOK_URL}"
       curl --request POST \
         --url "${WEBHOOK_URL}" \
@@ -16,11 +16,34 @@ if [ "${WEBHOOK_URL}" != "**None**" ]; then
         --max-time 10 \
         --retry 5 \
         ${WEBHOOK_EXTRA_ARGS}
-      ;;
-#   "pre-backup")
-#     echo "Nothing to do"
-#     ;;
-    "post-backup")
+    fi
+    if [ "${WEBHOOK_ERROR_URL}" != "**None**" ]; then
+      echo "Execute error webhook call to ${WEBHOOK_ERROR_URL}"
+      curl --request POST \
+        --url "${WEBHOOK_ERROR_URL}" \
+        --header 'Content-Type: application/json' \
+        --data '{"status": "error"}' \
+        --max-time 10 \
+        --retry 5 \
+        ${WEBHOOK_EXTRA_ARGS}
+    fi
+  ;;
+
+  "pre-backup")
+    if [ "${WEBHOOK_PRE_BACKUP_URL}" != "**None**" ]; then
+      echo "Execute pre-backup webhook call to ${WEBHOOK_PRE_BACKUP_URL}"
+      curl --request POST \
+        --url "${WEBHOOK_PRE_BACKUP_URL}" \
+        --header 'Content-Type: application/json' \
+        --data '{"status": "pre-backup"}' \
+        --max-time 10 \
+        --retry 5 \
+        ${WEBHOOK_EXTRA_ARGS}
+    fi
+  ;;
+
+  "post-backup")
+    if [ "${WEBHOOK_URL}" != "**None**" ]; then
       echo "Execute post-backup webhook call to ${WEBHOOK_URL}"
       curl --request POST \
         --url "${WEBHOOK_URL}" \
@@ -29,6 +52,16 @@ if [ "${WEBHOOK_URL}" != "**None**" ]; then
         --max-time 10 \
         --retry 5 \
         ${WEBHOOK_EXTRA_ARGS}
-      ;;
-  esac
-fi
+    fi
+    if [ "${WEBHOOK_POST_BACKUP_URL}" != "**None**" ]; then
+      echo "Execute post-backup webhook call to ${WEBHOOK_POST_BACKUP_URL}"
+      curl --request POST \
+        --url "${WEBHOOK_POST_BACKUP_URL}" \
+        --header 'Content-Type: application/json' \
+        --data '{"status": "post-backup"}' \
+        --max-time 10 \
+        --retry 5 \
+        ${WEBHOOK_EXTRA_ARGS}
+    fi
+  ;;
+esac
