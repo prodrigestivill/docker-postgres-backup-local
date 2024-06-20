@@ -14,7 +14,7 @@ jobs:
     runs-on: ubuntu-22.04
     environment: docker.io
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Generate README for DockerHub
         run: cp dockerhub-header.md dockerhub.md && awk '{if(p)print}/^# /{p=1}' README.md >> dockerhub.md
