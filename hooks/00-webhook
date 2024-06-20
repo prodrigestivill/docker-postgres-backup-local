@@ -1,7 +1,5 @@
 #!/bin/sh
 
-set -e
-
 # Possible actions: error, pre-backup, post-backup
 ACTION="${1}"
 
