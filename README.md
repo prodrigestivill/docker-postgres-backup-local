@@ -51,6 +51,7 @@ services:
          #  - POSTGRES_PASSWORD_FILE=/run/secrets/db_password <-- alternative for POSTGRES_PASSWORD (to use with docker secrets)
             - POSTGRES_EXTRA_OPTS=-Z1 --schema=public --blobs
             - SCHEDULE=@daily
+            - BACKUP_ON_START=TRUE
             - BACKUP_KEEP_DAYS=7
             - BACKUP_KEEP_WEEKS=4
             - BACKUP_KEEP_MONTHS=6
@@ -75,6 +76,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 |--|--|
 | BACKUP_DIR | Directory to save the backup at. Defaults to `/backups`. |
 | BACKUP_SUFFIX | Filename suffix to save the backup. Defaults to `.sql.gz`. |
+| BACKUP_ON_START | If set to `TRUE` performs an backup on each container start or restart. Defaults to `FALSE`. |
 | BACKUP_KEEP_DAYS | Number of daily backups to keep before removal. Defaults to `7`. |
 | BACKUP_KEEP_WEEKS | Number of weekly backups to keep before removal. Defaults to `4`. |
 | BACKUP_KEEP_MONTHS | Number of monthly backups to keep before removal. Defaults to `6`. |

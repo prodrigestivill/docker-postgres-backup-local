@@ -1,7 +1,7 @@
 ARG BASETAG=alpine
 FROM postgres:$BASETAG
 
-ARG GOCRONVER=v0.0.10
+ARG GOCRONVER=v0.0.11
 ARG TARGETOS
 ARG TARGETARCH
 RUN set -x \
@@ -21,6 +21,7 @@ ENV POSTGRES_DB="**None**" \
     POSTGRES_EXTRA_OPTS="-Z1" \
     POSTGRES_CLUSTER="FALSE" \
     SCHEDULE="@daily" \
+    BACKUP_ON_START="FALSE" \
     BACKUP_DIR="/backups" \
     BACKUP_SUFFIX=".sql.gz" \
     BACKUP_LATEST_TYPE="symlink" \
@@ -36,12 +37,12 @@ ENV POSTGRES_DB="**None**" \
     WEBHOOK_EXTRA_ARGS=""
 
 COPY hooks /hooks
-COPY backup.sh /backup.sh
+COPY backup.sh env.sh init.sh /
 
 VOLUME /backups
 
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["exec /usr/local/bin/go-cron -s \"$SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh"]
+ENTRYPOINT []
+CMD ["/init.sh"]
 
 HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f "http://localhost:$HEALTHCHECK_PORT/" || exit 1
