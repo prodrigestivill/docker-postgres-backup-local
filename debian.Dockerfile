@@ -54,8 +54,8 @@ COPY backup.sh env.sh init.sh /
 
 VOLUME /backups
 
-ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["exec /init.sh"]
+ENTRYPOINT []
+CMD ["/init.sh"]
 
 HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f "http://localhost:$HEALTHCHECK_PORT/" || exit 1
