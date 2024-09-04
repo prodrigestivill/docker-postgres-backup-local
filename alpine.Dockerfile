@@ -21,6 +21,7 @@ ENV POSTGRES_DB="**None**" \
     POSTGRES_EXTRA_OPTS="-Z1" \
     POSTGRES_CLUSTER="FALSE" \
     SCHEDULE="@daily" \
+    BACKUP_ON_START="FALSE" \
     BACKUP_DIR="/backups" \
     BACKUP_SUFFIX=".sql.gz" \
     BACKUP_LATEST_TYPE="symlink" \
