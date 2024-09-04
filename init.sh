@@ -4,11 +4,11 @@ set -Eeo pipefail
 # Prevalidate configuration (don't source)
 /env.sh
 
+EXTRA_ARGS=""
 # Initial background backup
 if [ "${BACKUP_ON_START}" = "TRUE" ]; then
-  echo "Launching an startup backup as a background job..."
-  /backup.sh &
+  EXTRA_ARGS="-i"
 fi
 
 echo "Starting go-cron ($SCHEDULE)..."
-exec /usr/local/bin/go-cron -s "$SCHEDULE" -p "$HEALTHCHECK_PORT" -- /backup.sh
+exec /usr/local/bin/go-cron -s "$SCHEDULE" -p "$HEALTHCHECK_PORT" $EXTRA_ARGS -- /backup.sh
