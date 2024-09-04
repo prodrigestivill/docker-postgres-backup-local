@@ -50,12 +50,12 @@ ENV POSTGRES_DB="**None**" \
     WEBHOOK_EXTRA_ARGS=""
 
 COPY hooks /hooks
-COPY backup.sh /backup.sh
+COPY backup.sh env.sh init.sh /
 
 VOLUME /backups
 
 ENTRYPOINT ["/bin/sh", "-c"]
-CMD ["exec /usr/local/bin/go-cron -s \"$SCHEDULE\" -p \"$HEALTHCHECK_PORT\" -- /backup.sh"]
+CMD ["exec /init.sh"]
 
 HEALTHCHECK --interval=5m --timeout=3s \
   CMD curl -f "http://localhost:$HEALTHCHECK_PORT/" || exit 1
