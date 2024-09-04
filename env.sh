@@ -60,9 +60,7 @@ KEEP_WEEKS=`expr $(((${BACKUP_KEEP_WEEKS} * 7) + 1))`
 KEEP_MONTHS=`expr $(((${BACKUP_KEEP_MONTHS} * 31) + 1))`
 
 # Validate backup dir
-if [ -d "${BACKUP_DIR}" -a -w "${BACKUP_DIR}" -a -x "${BACKUP_DIR}" ]; then
-  echo "Backups will be stored at ${BACKUP_DIR}."
-else
+if [ '!' -d "${BACKUP_DIR}" -o '!' -w "${BACKUP_DIR}" -o '!' -x "${BACKUP_DIR}" ]; then
   echo "BACKUP_DIR points to a file or folder with insufficient permissions."
   exit 1
 fi

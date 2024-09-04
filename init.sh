@@ -10,5 +10,4 @@ if [ "${BACKUP_ON_START}" = "TRUE" ]; then
   EXTRA_ARGS="-i"
 fi
 
-echo "Starting go-cron ($SCHEDULE)..."
 exec /usr/local/bin/go-cron -s "$SCHEDULE" -p "$HEALTHCHECK_PORT" $EXTRA_ARGS -- /backup.sh
