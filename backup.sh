@@ -102,9 +102,16 @@ for DB in ${POSTGRES_DBS}; do
     MFILENEW="${MFILE}-new"
     rm -rf "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
     mkdir "${DFILENEW}" "${WFILENEW}" "${MFILENEW}"
-    ln -f "${FILE}/"* "${DFILENEW}/"
-    ln -f "${FILE}/"* "${WFILENEW}/"
-    ln -f "${FILE}/"* "${MFILENEW}/"
+    (
+      # Allow to hardlink more files than max arg list length
+      # first CHDIR to avoid possible space problems with BACKUP_DIR
+      cd "${FILE}"
+      for F in *; do
+        ln -f "$F" "${DFILENEW}/"
+        ln -f "$F" "${WFILENEW}/"
+        ln -f "$F" "${MFILENEW}/"
+      done
+    )
     rm -rf "${DFILE}" "${WFILE}" "${MFILE}"
     echo "Replacing daily backup ${DFILE} folder this last backup..."
     mv "${DFILENEW}" "${DFILE}"
