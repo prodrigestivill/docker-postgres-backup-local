@@ -23,7 +23,6 @@ docker run -u postgres:postgres -e POSTGRES_HOST=postgres -e POSTGRES_DB=dbname 
 Docker Compose:
 
 ```yaml
-version: '2'
 services:
     postgres:
         image: postgres
@@ -105,7 +104,7 @@ Most variables are the same as in the [official postgres image](https://hub.dock
 
 #### Special Environment Variables
 
-This variables are not intended to be used for normal deployment operations:
+These variables are not intended to be used for normal deployment operations:
 
 | env variable | description |
 |--|--|
@@ -116,16 +115,16 @@ This variables are not intended to be used for normal deployment operations:
 
 First a new backup is created in the `last` folder with the full time.
 
-Once this backup finish succefully then, it is hard linked (instead of coping to avoid use more space) to the rest of the folders (daily, weekly and monthly). This step replaces the old backups for that category storing always only the latest for each category (so the monthly backup for a month is always storing the latest for that month and not the first).
+Once this backup finishes successfully, it is hard linked (instead of copying to avoid using more space) to the rest of the folders (daily, weekly and monthly). This step replaces the old backups for that category storing always only the latest for each category (so the monthly backup for a month is always storing the latest for that month and not the first).
 
 So the backup folder are structured as follows:
 
-* `BACKUP_DIR/last/DB-YYYYMMDD-HHmmss.sql.gz`: all the backups are stored separatly in this folder.
+* `BACKUP_DIR/last/DB-YYYYMMDD-HHmmss.sql.gz`: all the backups are stored separately in this folder.
 * `BACKUP_DIR/daily/DB-YYYYMMDD.sql.gz`: always store (hard link) the **latest** backup of that day.
 * `BACKUP_DIR/weekly/DB-YYYYww.sql.gz`: always store (hard link) the **latest** backup of that week (the last day of the week will be Sunday as it uses ISO week numbers).
 * `BACKUP_DIR/monthly/DB-YYYYMM.sql.gz`: always store (hard link) the **latest** backup of that month (normally the ~31st).
 
-And the following symlinks are also updated after each successfull backup for simlicity:
+And the following symlinks are also updated after each successful backup for simplicity:
 
 ```
 BACKUP_DIR/last/DB-latest.sql.gz -> BACKUP_DIR/last/DB-YYYYMMDD-HHmmss.sql.gz
@@ -134,13 +133,13 @@ BACKUP_DIR/weekly/DB-latest.sql.gz -> BACKUP_DIR/weekly/DB-YYYYww.sql.gz
 BACKUP_DIR/monthly/DB-latest.sql.gz -> BACKUP_DIR/monthly/DB-YYYYMM.sql.gz
 ```
 
-For **cleaning** the script removes the files for each category only if the new backup has been successfull.
+For **cleaning** the script removes the files for each category only if the new backup has been successful.
 To do so it is using the following independent variables:
 
-* BACKUP_KEEP_MINS: will remove files from the `last` folder that are older than its value in minutes after a new successfull backup without affecting the rest of the backups (because they are hard links).
-* BACKUP_KEEP_DAYS: will remove files from the `daily` folder that are older than its value in days after a new successfull backup.
-* BACKUP_KEEP_WEEKS: will remove files from the `weekly` folder that are older than its value in weeks after a new successfull backup (remember that it starts counting from the end of each week not the beggining).
-* BACKUP_KEEP_MONTHS: will remove files from the `monthly` folder that are older than its value in months (of 31 days) after a new successfull backup (remember that it starts counting from the end of each month not the beggining).
+* BACKUP_KEEP_MINS: will remove files from the `last` folder that are older than its value in minutes after a new successful backup without affecting the rest of the backups (because they are hard links).
+* BACKUP_KEEP_DAYS: will remove files from the `daily` folder that are older than its value in days after a new successful backup.
+* BACKUP_KEEP_WEEKS: will remove files from the `weekly` folder that are older than its value in weeks after a new successful backup (remember that it starts counting from the end of each week not the beginning).
+* BACKUP_KEEP_MONTHS: will remove files from the `monthly` folder that are older than its value in months (of 31 days) after a new successful backup (remember that it starts counting from the end of each month not the beginning).
 
 ### Hooks
 
