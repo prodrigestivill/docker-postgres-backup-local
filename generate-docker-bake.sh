@@ -12,11 +12,22 @@ cd "$(dirname "$0")"
 
 P="\"$(echo $PLATFORMS | sed 's/ /", "/g')\""
 
-T="\"debian-latest\", \"alpine-latest\", \"$(echo debian-$TAGS_EXTRA | sed 's/ /", "debian-/g')\", \"$(echo alpine-$TAGS_EXTRA | sed 's/ /", "alpine-/g')\""
+DEBIAN_TARGETS="\"debian-latest\", \"$(echo debian-$TAGS_EXTRA | sed 's/ /", "debian-/g')\""
+ALPINE_TARGETS="\"alpine-latest\", \"$(echo alpine-$TAGS_EXTRA | sed 's/ /", "alpine-/g')\""
 
-cat > "$DOCKER_BAKE_FILE" << EOF
+cat >"$DOCKER_BAKE_FILE" <<EOF
+target "docker-metadata-action" {}
+
 group "default" {
-	targets = [$T]
+	targets = [$DEBIAN_TARGETS, $ALPINE_TARGETS]
+}
+
+group "debian-all" {
+	targets = [$DEBIAN_TARGETS]
+}
+
+group "alpine-all" {
+	targets = [$ALPINE_TARGETS]
 }
 
 variable "REGISTRY_PREFIX" {
@@ -32,11 +43,13 @@ variable "BUILD_REVISION" {
 }
 
 target "debian" {
+	inherits = ["docker-metadata-action"]
 	args = {"GOCRONVER" = "$GOCRONVER"}
 	dockerfile = "debian.Dockerfile"
 }
 
 target "alpine" {
+	inherits = ["docker-metadata-action"]
 	args = {"GOCRONVER" = "$GOCRONVER"}
 	dockerfile = "alpine.Dockerfile"
 }
@@ -64,7 +77,8 @@ target "alpine-latest" {
 }
 EOF
 
-for TAG in $TAGS_EXTRA; do cat >> "$DOCKER_BAKE_FILE" << EOF
+for TAG in $TAGS_EXTRA; do
+  cat >>"$DOCKER_BAKE_FILE" <<EOF
 
 target "debian-$TAG" {
 	inherits = ["debian"]
