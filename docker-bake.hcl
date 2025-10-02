@@ -1,5 +1,15 @@
+target "docker-metadata-action" {}
+
 group "default" {
-	targets = ["debian-latest", "alpine-latest", "debian-17", "debian-16", "debian-15", "debian-14", "debian-13", "alpine-17", "alpine-16", "alpine-15", "alpine-14", "alpine-13"]
+	targets = ["debian-latest", "debian-17", "debian-16", "debian-15", "debian-14", "debian-13", "alpine-latest", "alpine-17", "alpine-16", "alpine-15", "alpine-14", "alpine-13"]
+}
+
+group "debian-all" {
+	targets = ["debian-latest", "debian-17", "debian-16", "debian-15", "debian-14", "debian-13"]
+}
+
+group "alpine-all" {
+	targets = ["alpine-latest", "alpine-17", "alpine-16", "alpine-15", "alpine-14", "alpine-13"]
 }
 
 variable "REGISTRY_PREFIX" {
@@ -15,11 +25,13 @@ variable "BUILD_REVISION" {
 }
 
 target "debian" {
+	inherits = ["docker-metadata-action"]
 	args = {"GOCRONVER" = "v0.0.11"}
 	dockerfile = "debian.Dockerfile"
 }
 
 target "alpine" {
+	inherits = ["docker-metadata-action"]
 	args = {"GOCRONVER" = "v0.0.11"}
 	dockerfile = "alpine.Dockerfile"
 }

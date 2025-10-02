@@ -8,6 +8,7 @@ on:
       - '**.md'
       - '.gitignore'
       - '.github/workflows/pushrm.yml'
+  workflow_dispatch:
   pull_request:
     paths-ignore:
       - '**.md'
@@ -151,6 +152,9 @@ jobs:
     needs: [ test-script ]
     runs-on: ubuntu-22.04
     environment: docker.io
+    permissions:
+      contents: read
+      packages: write
     steps:
       # Increase available disk space by removing unnecessary tool chains:
       # https://github.com/actions/runner-images/issues/2840#issuecomment-790492173
@@ -165,27 +169,48 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Configure build revision
+        id: vars
+        run: echo "sha_short=${GITHUB_SHA:0:7}" >> "$GITHUB_OUTPUT"
+
       - name: Login to Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
+        if: github.repository_owner == 'prodrigestivill'
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Configure build revision
-        id: vars
-        run: echo "::set-output name=sha_short::${GITHUB_SHA:0:7}"
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        if: github.repository_owner != 'prodrigestivill'
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Build images
-        env:
-          REGISTRY_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/
-          BUILD_REVISION: ${{ steps.vars.outputs.sha_short }}
-        run: docker buildx bake --pull
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
 
-      - name: Push images
+      - name: Get repo name
+        run: |
+          echo "REPO_NAME=$(echo "$GITHUB_REPOSITORY" | cut -d "/" -f 2)" >> "$GITHUB_ENV"
+          echo "GHCR_REPO=ghcr.io/$GITHUB_REPOSITORY_OWNER" >> "$GITHUB_ENV"
+
+      - name: Build image
+        uses: docker/bake-action@v6
         env:
-          REGISTRY_PREFIX: ${{ secrets.DOCKERHUB_USERNAME }}/
+          REGISTRY_PREFIX: ${{ github.repository_owner == 'prodrigestivill' && secrets.DOCKERHUB_USERNAME || env.GHCR_REPO }}/
+          IMAGE_NAME: ${{ github.repository_owner == 'prodrigestivill' && 'postgres-backup-local' || env.REPO_NAME }}
           BUILD_REVISION: ${{ steps.vars.outputs.sha_short }}
-        run: docker buildx bake --push
+        with:
+          push: true
+          targets: default
+          files: |
+            ./docker-bake.hcl
+            cwd://${{ steps.meta.outputs.bake-file-labels }}
+            cwd://${{ steps.meta.outputs.bake-file-annotations }}
+
 
   ## Example of publish using GitHub Container Registry instead
   # publish:
